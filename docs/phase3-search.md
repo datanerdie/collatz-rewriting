@@ -195,8 +195,8 @@ means the search gives no evidence about the conjecture in either direction.
 ### 6.6 Trust
 
 - Every proof reported was verified by `checker/check.py`.
-- "Ruled out" verdicts are not certified. A sample was repeated with a second SAT solver;
-  see `results/phase3/crosscheck.md`. Both solvers are given the same formula by the same
+- "Ruled out" verdicts are not certified. A sample of 303 of them, one in ten, was repeated
+  with a second SAT solver, which agreed on all 303; see `results/phase3/crosscheck.md`. Both solvers are given the same formula by the same
   prover code, so this guards against a solver bug, not against an encoding bug. The check on
   the encoding is the control group.
 - All solving used the CaDiCaL build inside the python-sat package through a Python stand-in
