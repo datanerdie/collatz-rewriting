@@ -1,0 +1,526 @@
+{
+ "problem": "collatz-T-11.srs",
+ "rules": [
+  "ad ->= d",
+  "bd ->= gd",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ce |-> cb",
+  "cf |-> caa"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 4,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       null,
+       0,
+       null,
+       0
+      ],
+      [
+       0,
+       null,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       0,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      1,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0,
+       0,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       0
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       null,
+       1,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       null,
+       0,
+       0,
+       0
+      ],
+      [
+       null,
+       null,
+       null,
+       0
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       0,
+       0,
+       0,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      0,
+      null,
+      1
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       null,
+       0
+      ],
+      [
+       0,
+       null,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      1,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       0,
+       0,
+       0
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "ce |-> cb"
+   ]
+  },
+  {
+   "type": "arctic",
+   "dimension": 4,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      0,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null,
+       0
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       1,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       null,
+       null,
+       0
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      0,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "cf |-> caa"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "4",
+   "-rw",
+   "3",
+   "-any",
+   "--no-print"
+  ],
+  "status": "QED",
+  "seconds": 3.886,
+  "solver": "cadical195"
+ }
+}

@@ -1,0 +1,113 @@
+{
+ "problem": "collatz-T-02.srs",
+ "rules": [
+  "ad ->= d",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab"
+ ],
+ "steps": [
+  {
+   "type": "natural",
+   "dimension": 1,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    }
+   },
+   "removed": [
+    "ce |-> cb",
+    "cf |-> caa",
+    "cg |-> cab"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "natural",
+   "-d",
+   "1",
+   "-rw",
+   "2",
+   "-any",
+   "--no-print"
+  ],
+  "status": "QED",
+  "seconds": 0.06,
+  "solver": "cadical195"
+ }
+}

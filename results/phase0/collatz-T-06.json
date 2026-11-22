@@ -1,0 +1,563 @@
+{
+ "problem": "collatz-T-06.srs",
+ "rules": [
+  "ad ->= d",
+  "bd ->= gd",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       null,
+       0,
+       1
+      ],
+      [
+       0,
+       null,
+       0
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       1
+      ],
+      [
+       0,
+       null,
+       1
+      ]
+     ],
+     "v": [
+      null,
+      1,
+      1
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       null,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       null,
+       0
+      ],
+      [
+       null,
+       0,
+       1
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      1,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       1,
+       1,
+       2
+      ],
+      [
+       0,
+       1,
+       2
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      2,
+      1,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       1
+      ],
+      [
+       1,
+       0,
+       1
+      ]
+     ],
+     "v": [
+      null,
+      1,
+      1
+     ]
+    }
+   },
+   "removed": [
+    "cf |-> caa"
+   ]
+  },
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       null,
+       0
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "ce |-> cb"
+   ]
+  },
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       0
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       0
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       null,
+       1
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "cg |-> cab"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "3",
+   "-rw",
+   "4",
+   "-any",
+   "--no-print"
+  ],
+  "status": "QED",
+  "seconds": 0.882,
+  "solver": "cadical195"
+ }
+}
