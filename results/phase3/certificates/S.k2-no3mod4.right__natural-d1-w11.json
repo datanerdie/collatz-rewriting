@@ -1,0 +1,131 @@
+{
+ "problem": "S.k2-no3mod4.right.srs",
+ "rules": [
+  "dba |-> di",
+  "dab |-> dg",
+  "dbb |-> dei",
+  "ea ->= ae",
+  "fa ->= be",
+  "ga ->= af",
+  "eb ->= bf",
+  "fb ->= ag",
+  "gb ->= bg",
+  "ia ->= b",
+  "ib ->= ai",
+  "ec ->= bc",
+  "fc ->= aac",
+  "gc ->= bac",
+  "ic ->= ac"
+ ],
+ "steps": [
+  {
+   "type": "natural",
+   "dimension": 1,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      2
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       3
+      ]
+     ],
+     "v": [
+      2
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       3
+      ]
+     ],
+     "v": [
+      3
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       3
+      ]
+     ],
+     "v": [
+      4
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    }
+   },
+   "removed": [
+    "dba |-> di",
+    "dab |-> dg",
+    "dbb |-> dei"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "natural",
+   "-d",
+   "1",
+   "-rw",
+   "11",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "QED",
+  "seconds": 0.106,
+  "solver": "cadical195"
+ }
+}

@@ -277,7 +277,7 @@ def report():
     problems = {p['name']: p for p in all_problems()}
     size = lambda r: (r['dimension'] ** 3 * r['values'] ** 2, r['type'])
     out = []
-    say = out.append
+    say = lambda text='': out.append(text)
 
     def cell(name):
         rs = by_problem.get(name)

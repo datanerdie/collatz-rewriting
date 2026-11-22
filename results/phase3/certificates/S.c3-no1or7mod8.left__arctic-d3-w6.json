@@ -1,0 +1,845 @@
+{
+ "problem": "S.c3-no1or7mod8.left.srs",
+ "rules": [
+  "abd ->= bd",
+  "bbd ->= iad",
+  "baad ->= fbad",
+  "bbad ->= gabd",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ai ->= b",
+  "bi ->= ia",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab",
+  "ci |-> ca"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      1,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      1,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null,
+      null
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       1,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "ci |-> ca"
+   ]
+  },
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       1,
+       null,
+       2
+      ],
+      [
+       1,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      1,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       null,
+       1,
+       0
+      ],
+      [
+       null,
+       1,
+       1
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       null,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      0
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       2,
+       null,
+       3
+      ],
+      [
+       null,
+       2,
+       2
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      2,
+      1,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       null,
+       2,
+       2
+      ],
+      [
+       2,
+       null,
+       3
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      2,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       2,
+       null,
+       3
+      ],
+      [
+       null,
+       2,
+       2
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      2,
+      1,
+      null
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       null,
+       0,
+       0
+      ],
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       1
+      ]
+     ],
+     "v": [
+      0,
+      0,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "ce |-> cb"
+   ]
+  },
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       1,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       null,
+       1,
+       null
+      ],
+      [
+       null,
+       1,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      0,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       1,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      0,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       1,
+       null,
+       null
+      ],
+      [
+       0,
+       1,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      0,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       1,
+       1,
+       null
+      ],
+      [
+       0,
+       1,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      0,
+      null
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       null,
+       1,
+       null
+      ],
+      [
+       null,
+       1,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "cf |-> caa"
+   ]
+  },
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       0
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       0
+      ],
+      [
+       1,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       0,
+       null,
+       0
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       1,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "cg |-> cab"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "3",
+   "-rw",
+   "6",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "QED",
+  "seconds": 16.515,
+  "solver": "cadical195"
+ }
+}

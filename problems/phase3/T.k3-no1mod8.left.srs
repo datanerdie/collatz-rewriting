@@ -1,0 +1,16 @@
+aaad ->= d
+abad ->= fd
+abbd ->= ffd
+baad ->= gd
+babd ->= gd
+bbad ->= ggd
+bbbd ->= gggd
+ae ->= ea
+af ->= eb
+ag ->= fa
+be ->= fb
+bf ->= ga
+bg ->= gb
+ce |-> cb
+cf |-> caa
+cg |-> cab
