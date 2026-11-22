@@ -35,7 +35,7 @@ idea is a variation on existing work, not a new one. It is included as a compari
 | Phase | Work | Status |
 |---|---|---|
 | 0 | Reproduce the 11 published "one rule left out" proofs; check them with an independent checker | done: all 11 found and accepted, see `results/phase0/summary.md` |
-| 1 | Fix the shifted system and prove "terminates ⇔ Collatz" for it; build correct 3n−1 and 5n+1 siblings | in progress: systems and proof in `docs/phase1-shifted-system.md`; full-size simulation still running |
+| 1 | Fix the shifted system and prove "terminates ⇔ Collatz" for it; build correct 3n−1 and 5n+1 siblings | done: proof in `docs/phase1-shifted-system.md`, checks in `results/phase1/summary.md` |
 | 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | not started |
 | 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record SAT / UNSAT / timeout | not started |
 | 4 | Write up what the grid shows | not started |
