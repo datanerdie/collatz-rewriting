@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""Drop-in stand-in for the `cadical` command line that the published prover calls.
+
+The published prover (prover/sat.py) runs `./cadical -q --seed=N --phase=... --forcephase=...`,
+writes a DIMACS CNF to stdin and reads `s SATISFIABLE` / `v ...` lines back, using the exit
+code 10 (SAT) or 20 (UNSAT).  This script provides the same interface on top of the CaDiCaL
+build that ships inside the `python-sat` package, so no native solver has to be compiled.
+
+The solver can be switched with the environment variable PYSAT_SOLVER (default cadical195).
+"""
+import os
+import sys
+
+from pysat.solvers import Solver
+
+
+def main():
+    opts = dict(a.lstrip('-').split('=', 1) for a in sys.argv[1:] if '=' in a)
+    nvars, clauses = 0, []
+    for line in sys.stdin:
+        if not line or line[0] in 'c\n':
+            continue
+        if line[0] == 'p':
+            nvars = int(line.split()[2])
+            continue
+        lits = [int(x) for x in line.split()]
+        if lits and lits[-1] == 0:
+            lits.pop()
+        clauses.append(lits)
+
+    solver = Solver(name=os.environ.get('PYSAT_SOLVER', 'cadical195'), bootstrap_with=clauses)
+    # `--phase=false --forcephase=true` means: always branch on the negative literal first.
+    if opts.get('forcephase') == 'true' and nvars:
+        sign = 1 if opts.get('phase') == 'true' else -1
+        solver.set_phases([sign * v for v in range(1, nvars + 1)])
+
+    if solver.solve():
+        model = {abs(l): l for l in solver.get_model()}
+        lits = [model.get(v, -v) for v in range(1, nvars + 1)] + [0]
+        out = ['s SATISFIABLE']
+        for i in range(0, len(lits), 12):
+            out.append('v ' + ' '.join(map(str, lits[i:i + 12])))
+        sys.stdout.write('\n'.join(out) + '\n')
+        sys.stdout.flush()
+        os._exit(10)
+    sys.stdout.write('s UNSATISFIABLE\n')
+    sys.stdout.flush()
+    os._exit(20)
+
+
+if __name__ == '__main__':
+    main()
