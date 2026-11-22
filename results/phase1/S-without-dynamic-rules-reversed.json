@@ -1,0 +1,95 @@
+{
+ "problem": "S-without-dynamic-rules-reversed.srs",
+ "steps": [
+  {
+   "type": "natural",
+   "dimension": 1,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       4
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       4
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       4
+      ]
+     ],
+     "v": [
+      0
+     ]
+    }
+   },
+   "removed": [
+    "ea -> ae",
+    "fa -> be",
+    "ga -> af",
+    "eb -> bf",
+    "fb -> ag",
+    "gb -> bg",
+    "ia -> b",
+    "ib -> ai",
+    "ec -> bc",
+    "fc -> aac",
+    "gc -> bac",
+    "ic -> ac"
+   ]
+  }
+ ]
+}

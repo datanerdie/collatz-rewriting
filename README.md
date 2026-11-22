@@ -35,7 +35,7 @@ idea is a variation on existing work, not a new one. It is included as a compari
 | Phase | Work | Status |
 |---|---|---|
 | 0 | Reproduce the 11 published "one rule left out" proofs; check them with an independent checker | done: all 11 found and accepted, see `results/phase0/summary.md` |
-| 1 | Fix the shifted system and prove "terminates ⇔ Collatz" for it; build correct 3n−1 and 5n+1 siblings | not started |
+| 1 | Fix the shifted system and prove "terminates ⇔ Collatz" for it; build correct 3n−1 and 5n+1 siblings | in progress: systems and proof in `docs/phase1-shifted-system.md`; full-size simulation still running |
 | 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | not started |
 | 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record SAT / UNSAT / timeout | not started |
 | 4 | Write up what the grid shows | not started |
@@ -51,10 +51,13 @@ is treated as a bug until it passes the independent checker and a second prover.
 |---|---|
 | `checker/check.py` | Independent checker for natural and arctic matrix-interpretation certificates. Exact integer arithmetic, no code shared with any prover. |
 | `tests/test_checker.py` | Tests for the checker, including corrupted certificates that must be rejected. |
-| `harness/systems.py` | Our own definition of the system *T* and of the problems derived from it. |
+| `harness/systems.py` | Our own definitions of the paper's system *T*, the shifted systems, the 3n−1 and 5n+1 siblings, and the problems derived from them. |
 | `harness/run_published.py` | Runs the published prover on one problem and saves its interpretations as a JSON certificate. |
 | `harness/cadical` | Stand-in for the `cadical` command line used by the published prover, backed by the `python-sat` package. |
 | `harness/phase0.py` | Runs Phase 0 end to end. |
+| `harness/rewrite.py` | Small rewriting engine: all successors of a string, full rewrite graphs, cycle detection. |
+| `harness/phase1.py` | Runs the Phase 1 checks: rule arithmetic, termination lemmas, exhaustive simulation, sibling loops. |
+| `docs/phase1-shifted-system.md` | Definition of the shifted systems S and S2 and the proof that each terminates exactly when the Collatz conjecture holds. |
 | `scripts/fetch_baseline.sh` | Fetches the code published with the paper at a pinned commit into `third_party/` (not committed: it has no licence file). |
 | `problems/`, `results/` | Problem files and the certificates and summaries produced for them. |
 
@@ -74,6 +77,10 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
 ```bash
 .venv/bin/python harness/phase0.py
+```
+
+```bash
+python3 harness/phase1.py
 ```
 
 To check a single certificate:
