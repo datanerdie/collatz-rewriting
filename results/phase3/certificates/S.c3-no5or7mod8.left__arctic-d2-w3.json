@@ -1,0 +1,178 @@
+{
+ "problem": "S.c3-no5or7mod8.left.srs",
+ "rules": [
+  "abd ->= bd",
+  "bbd ->= iad",
+  "abad ->= ebbd",
+  "baad ->= fbad",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ai ->= b",
+  "bi ->= ia",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab",
+  "ci |-> ca"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 2,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       0
+      ]
+     ],
+     "v": [
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       null,
+       0
+      ],
+      [
+       0,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       null,
+       0
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       null,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "v": [
+      1,
+      1
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "v": [
+      1,
+      1
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "v": [
+      1,
+      1
+     ]
+    }
+   },
+   "removed": [
+    "ci |-> ca"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "2",
+   "-rw",
+   "3",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "UNSAT",
+  "seconds": 0.161,
+  "solver": "cadical195"
+ }
+}

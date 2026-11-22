@@ -1,0 +1,130 @@
+{
+ "problem": "S.c3-no5or7mod8.left.srs",
+ "rules": [
+  "abd ->= bd",
+  "bbd ->= iad",
+  "abad ->= ebbd",
+  "baad ->= fbad",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ai ->= b",
+  "bi ->= ia",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab",
+  "ci |-> ca"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 1,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       null
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      1
+     ]
+    }
+   },
+   "removed": [
+    "ci |-> ca"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "1",
+   "-rw",
+   "8",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "UNSAT",
+  "seconds": 0.193,
+  "solver": "cadical195"
+ }
+}

@@ -1,0 +1,17 @@
+ad ->= d
+bd ->= yd
+av ->= va
+aw ->= vb
+ax ->= wa
+ay ->= wb
+az ->= xa
+bv ->= xb
+bw ->= ya
+bx ->= yb
+by ->= za
+bz ->= zb
+cv |-> cab
+cw |-> cba
+cx |-> cbb
+cy |-> caaa
+cz |-> caab

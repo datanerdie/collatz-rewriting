@@ -1,0 +1,178 @@
+{
+ "problem": "S.c3-no5or7mod8.left.srs",
+ "rules": [
+  "abd ->= bd",
+  "bbd ->= iad",
+  "abad ->= ebbd",
+  "baad ->= fbad",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ai ->= b",
+  "bi ->= ia",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab",
+  "ci |-> ca"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 2,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       null,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       1,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      1,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "ci |-> ca"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "2",
+   "-rw",
+   "4",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "UNSAT",
+  "seconds": 0.263,
+  "solver": "cadical195"
+ }
+}

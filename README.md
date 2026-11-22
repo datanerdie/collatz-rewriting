@@ -37,8 +37,8 @@ idea is a variation on existing work, not a new one. It is included as a compari
 | 0 | Reproduce the 11 published "one rule left out" proofs; check them with an independent checker | done: all 11 found and accepted, see `results/phase0/summary.md` |
 | 1 | Fix the shifted system and prove "terminates ⇔ Collatz" for it; build correct 3n−1 and 5n+1 siblings | done: proof in `docs/phase1-shifted-system.md`, checks in `results/phase1/summary.md` |
 | 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | done: argument in `docs/phase2-block-acceleration.md`, checks in `results/phase2/summary.md` |
-| 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record proved / ruled out / timed out. Includes the residue-class statements modulo 8 that the paper leaves open | in progress: design in `docs/phase3-search.md`, results so far in `results/phase3/` |
-| 4 | Write up what the grid shows | not started |
+| 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record proved / ruled out / timed out. Includes the residue-class statements modulo 8 that the paper leaves open | controls, targets and full problems done; block negative controls still running: design and findings in `docs/phase3-search.md`, tables in `results/phase3/summary.md` |
+| 4 | Write up what the grid shows | short version in `docs/phase3-search.md`, section 6; no fuller write-up yet |
 
 Controls in Phase 3: the paper's solvable variants must stay solvable in the new encodings
 (otherwise the encoding is worse and that branch stops), and the 3n−1 and 5n+1 systems, which
@@ -46,6 +46,22 @@ have extra cycles, must never be reported as terminating. Phase 2 showed that th
 control is available only for the single-step systems and for block sizes up to 4: with larger
 blocks the accelerated siblings no longer have a known loop. Any claimed proof for the full system
 is treated as a bug until it passes the independent checker and a second prover.
+
+## Result so far
+
+Phase 3 found no proof of anything that was not already known.
+
+- The five residue-class statements the paper proved were proved again and independently
+  checked, in the paper's encoding and in the shifted one. The shifted encoding never needed a
+  smaller interpretation and three times needed a larger one.
+- The four statements modulo 8 that the paper leaves open stayed unproved in every encoding.
+- For the conjecture itself, in 17 encodings including blocks of 2 to 6 steps, no
+  interpretation in the range searched removes even one rule.
+- The 3n − 1 and 5n + 1 systems were never reported as terminating, but the search treats them
+  exactly as it treats the Collatz systems, so it gives no evidence about the conjecture.
+
+The range searched is small: dimensions 1 and 2 completely, dimension 3 only for small
+coefficients. Details and limits are in `docs/phase3-search.md`, section 6.
 
 ## Layout
 
@@ -63,7 +79,8 @@ is treated as a bug until it passes the independent checker and a second prover.
 | `harness/phase2.py` | Builds the block-accelerated systems for block sizes 2–6 and runs the same checks on them. |
 | `docs/phase1-shifted-system.md` | Definition of the shifted systems S and S2 and the proof that each terminates exactly when the Collatz conjecture holds. |
 | `harness/phase3.py` | The search: builds every problem, runs the prover over a grid with time limits, verifies every proof, writes the summary. Resumable. |
-| `docs/phase3-search.md` | What is searched for, why a proof would mean what is claimed, and how to read the results. |
+| `docs/phase3-search.md` | What is searched for, why a proof would mean what is claimed, and what was found. |
+| `harness/crosscheck.py` | Repeats a sample of the "no interpretation exists" verdicts with a second SAT solver. |
 | `docs/phase2-block-acceleration.md` | Definition of the block-accelerated systems, the same equivalence for them, and what acceleration does to the negative controls. |
 | `scripts/fetch_baseline.sh` | Fetches the code published with the paper at a pinned commit into `third_party/` (not committed: it has no licence file). |
 | `problems/`, `results/` | Problem files and the certificates and summaries produced for them. |
@@ -96,6 +113,10 @@ python3 harness/phase2.py
 
 ```bash
 .venv/bin/python harness/phase3.py --validate --run control target full negative --report
+```
+
+```bash
+.venv/bin/python harness/crosscheck.py
 ```
 
 To check a single certificate:

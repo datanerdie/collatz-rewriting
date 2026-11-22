@@ -14,7 +14,7 @@ target and full problems.
 - "left" and "right" are the two search forms: left-end rules strict at the left end,
   or dynamic rules strict at the right end. A proof in either form is a proof.
 
-1,589 prover runs are recorded, with time limits of 120 seconds and dimensions 1 to 3.
+3,326 prover runs are recorded, with time limits of 60, 120 seconds and dimensions 1 to 3.
 
 ## Controls: statements the paper proved
 
@@ -87,25 +87,25 @@ class is visited at a step count that is a multiple of the block size.
 | T.c3 | 13 | no proof: 25 ruled out, 5 timed out | no proof: 26 ruled out, 4 timed out |
 | S.c3 | 17 | no proof: 26 ruled out, 4 timed out | no proof: 26 ruled out, 4 timed out; best partial removes 1 strict rule(s), leaves 4 |
 | T.k3 | 16 | no proof: 26 ruled out, 4 timed out | no proof: 26 ruled out, 4 timed out |
-| S.k3 | 19 | no proof: 27 ruled out, 3 timed out | no proof: 24 ruled out, 5 timed out |
+| S.k3 | 19 | no proof: 27 ruled out, 3 timed out | no proof: 24 ruled out, 6 timed out |
 
 ### Visits 7 mod 8
 
 | Encoding | Rules | Left form | Right form |
 |---|---|---|---|
-| T.c3 | 13 | no proof: 25 ruled out, 2 timed out | no proof: 25 ruled out, 1 timed out |
-| S.c3 | 17 | no proof: 25 ruled out, 1 timed out; best partial removes 1 strict rule(s), leaves 3 | not run |
-| T.k3 | 16 | not run | not run |
-| S.k3 | 19 | not run | not run |
+| T.c3 | 13 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.c3 | 17 | no proof: 25 ruled out, 5 timed out; best partial removes 1 strict rule(s), leaves 3 | no proof: 25 ruled out, 5 timed out |
+| T.k3 | 16 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.k3 | 19 | no proof: 26 ruled out, 4 timed out | no proof: 24 ruled out, 6 timed out |
 
 ### Visits 5 or 7 mod 8
 
 | Encoding | Rules | Left form | Right form |
 |---|---|---|---|
-| T.c3 | 12 | not run | not run |
-| S.c3 | 16 | not run | not run |
-| T.k3 | 15 | not run | not run |
-| S.k3 | 18 | not run | not run |
+| T.c3 | 12 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.c3 | 16 | no proof: 26 ruled out, 4 timed out; best partial removes 1 strict rule(s), leaves 3 | no proof: 25 ruled out, 5 timed out; best partial removes 1 strict rule(s), leaves 3 |
+| T.k3 | 15 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.k3 | 18 | no proof: 26 ruled out, 4 timed out | no proof: 24 ruled out, 6 timed out |
 
 ## The Collatz conjecture itself
 
@@ -113,23 +113,23 @@ Each system terminates if and only if the conjecture is true.
 
 | System | Rules | Left form | Right form |
 |---|---|---|---|
-| T | 11 | not run | not run |
-| S | 15 | not run | not run |
-| S2 | 18 | not run | not run |
-| T.c2 | 12 | not run | not run |
-| S.c2 | 16 | not run | not run |
-| T.c3 | 14 | not run | not run |
-| S.c3 | 18 | not run | not run |
-| T.k2 | 13 | not run | not run |
-| S.k2 | 16 | not run | not run |
-| T.k3 | 17 | not run | not run |
-| S.k3 | 20 | not run | not run |
-| T.k4 | 25 | not run | not run |
-| S.k4 | 28 | not run | not run |
-| T.k5 | 41 | not run | not run |
-| S.k5 | 44 | not run | not run |
-| T.k6 | 73 | not run | not run |
-| S.k6 | 76 | not run | not run |
+| T | 11 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S | 15 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S2 | 18 | no proof: 24 ruled out, 6 timed out | no proof: 25 ruled out, 5 timed out |
+| T.c2 | 12 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.c2 | 16 | no proof: 24 ruled out, 6 timed out | no proof: 25 ruled out, 5 timed out |
+| T.c3 | 14 | no proof: 25 ruled out, 5 timed out | no proof: 26 ruled out, 4 timed out |
+| S.c3 | 18 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| T.k2 | 13 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.k2 | 16 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| T.k3 | 17 | no proof: 25 ruled out, 5 timed out | no proof: 24 ruled out, 6 timed out |
+| S.k3 | 20 | no proof: 26 ruled out, 4 timed out | no proof: 24 ruled out, 6 timed out |
+| T.k4 | 25 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.k4 | 28 | no proof: 26 ruled out, 4 timed out | no proof: 24 ruled out, 6 timed out |
+| T.k5 | 41 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S.k5 | 44 | no proof: 25 ruled out, 5 timed out | no proof: 22 ruled out, 8 timed out |
+| T.k6 | 73 | no proof: 25 ruled out, 5 timed out | no proof: 23 ruled out, 7 timed out |
+| S.k6 | 76 | no proof: 24 ruled out, 6 timed out | no proof: 22 ruled out, 8 timed out |
 
 ## Negative controls: systems that loop
 
@@ -137,12 +137,12 @@ Each of these has an explicit loop, so "proved" in this table would be a bug. Pa
 
 | System | Rules | Left form | Right form |
 |---|---|---|---|
-| T- | 11 | not run | not run |
-| S- | 11 | not run | not run |
-| T5 | 17 | not run | not run |
-| T-.k2 | 13 | not run | not run |
-| S-.k2 | 13 | not run | not run |
-| T5.k2 | 19 | not run | not run |
+| T- | 11 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S- | 11 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| T5 | 17 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| T-.k2 | 13 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 3 timed out |
+| S-.k2 | 13 | no proof: 25 ruled out, 1 timed out | no proof: 25 ruled out, 1 timed out |
+| T5.k2 | 19 | no proof: 25 ruled out, 0 timed out | not run |
 | T-.k3 | 17 | not run | not run |
 | S-.k3 | 17 | not run | not run |
 | T5.k3 | 23 | not run | not run |

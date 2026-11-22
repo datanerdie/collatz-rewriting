@@ -1,0 +1,17 @@
+da |-> d
+db |-> dy
+va ->= av
+wa ->= bv
+xa ->= aw
+ya ->= bw
+za ->= ax
+vb ->= bx
+wb ->= ay
+xb ->= by
+yb ->= az
+zb ->= bz
+vc ->= bac
+wc ->= abc
+xc ->= bbc
+yc ->= aaac
+zc ->= baac

@@ -1,0 +1,242 @@
+{
+ "problem": "S.c3-no5or7mod8.left.srs",
+ "rules": [
+  "abd ->= bd",
+  "bbd ->= iad",
+  "abad ->= ebbd",
+  "baad ->= fbad",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ai ->= b",
+  "bi ->= ia",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab",
+  "ci |-> ca"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 3,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       null
+      ],
+      [
+       null,
+       null,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       null,
+       null,
+       1
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      0,
+      null
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      null
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       null,
+       null
+      ],
+      [
+       null,
+       0,
+       1
+      ]
+     ],
+     "v": [
+      0,
+      null,
+      0
+     ]
+    }
+   },
+   "removed": [
+    "ci |-> ca"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "3",
+   "-rw",
+   "8",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "running",
+  "seconds": 0.631,
+  "solver": "cadical195"
+ }
+}

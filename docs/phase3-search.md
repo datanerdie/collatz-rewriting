@@ -112,3 +112,100 @@ This grid is small. The paper's authors searched up to dimension 7 on 96-core ma
 proving the open statements in their own encoding, so for the encoding `T.c3` nothing new can
 be expected here. What this search can show is whether the new encodings behave differently
 from the paper's at the sizes where the paper's encoding is already known to fail or succeed.
+
+## 6. What the search found
+
+The tables are in `results/phase3/summary.md`. This section says how to read them.
+
+### 6.1 How far the search reached
+
+Every problem was given 30 configurations. Controls and targets had 120 seconds per run, the
+full and negative groups 60 seconds.
+
+| Configurations | Outcome |
+|---|---|
+| Dimension 1 and 2, every type and coefficient range | Decided in every run but three (arctic, dimension 2, 8 values) |
+| Dimension 3, natural with 2, 3 or 4 values; arctic with 3 values | Decided in all but three runs |
+| Dimension 3, natural with 6 values; arctic with 4 values | Partly decided |
+| Dimension 3, natural with 8 or 11 values; arctic with 6 or 8 values | Almost always timed out |
+
+So "no proof" below means: no interpretation exists in dimensions 1 and 2 within these
+coefficient ranges, or in dimension 3 with small coefficients, as far as the solver can be
+trusted; and nothing is known beyond that. The paper's search went to dimension 7.
+
+### 6.2 Controls: the harness finds what is known to be there
+
+All five statements the paper proved were proved again here, both in the paper's encoding and
+in the shifted one, and every proof was accepted by the independent checker.
+
+| Statement | Paper's encoding (`T.c`) | Shifted encoding (`S.c`) |
+|---|---|---|
+| Visits 1 mod 4 | natural, dimension 2, 4 values | natural, dimension 2, 4 values |
+| Visits 3 mod 4 | natural, dimension 2, 4 values | arctic, dimension 2, 6 values |
+| Visits 3 mod 8 | arctic, dimension 3, 6 values | natural, dimension 3, 11 values |
+| Visits 1 or 5 mod 8 | natural, dimension 2, 4 values | natural, dimension 2, 4 values |
+| Visits 1 or 7 mod 8 | arctic, dimension 2, 6 values | arctic, dimension 3, 6 values |
+
+Each cell is the smallest successful configuration over the two search forms.
+
+- **The shifted encoding is never better and sometimes worse.** It succeeds at the same
+  configuration in two cases and only at a later one in the search order (a larger dimension
+  or coefficient range) in three. Moving the "+1" into an increment
+  symbol does not make these statements easier for matrix interpretations; it adds four rules
+  that the interpretation must also respect.
+- **The block encodings prove only "visits 3 mod 4"**, and that one in dimension 1. The reason
+  is elementary: without the block for 3 mod 4, the three remaining blocks of size 2 all shrink
+  (n/4, (3n + 1)/4, (3n + 2)/4), so a weight function is enough. For the other four statements
+  no block proof was found. This is not a like-for-like failure: by Lemma H a block system
+  states that the class is visited at a step count divisible by the block size, which is a
+  stronger statement than the paper's.
+
+### 6.3 Targets: nothing new
+
+No proof was found for "visits 1 mod 8", "5 mod 8", "7 mod 8" or "5 or 7 mod 8" in any of the
+four encodings or either search form. The only partial results remove a rule that is trivially
+used finitely often in the shifted encoding (`◁s → ◁f` in the left form, `ft▷ → t▷` in the
+right form); they say nothing about the statements.
+
+For the paper's encoding this was certain in advance, since the authors searched much further.
+For the shifted and block encodings it is a new, small negative result: they do not make the
+open statements provable at the sizes where the proved statements are provable.
+
+### 6.4 The conjecture itself: no rule can be removed
+
+For none of the 17 encodings of the full problem (T, S, S2, the context systems, and blocks of
+2 to 6 steps, shifted or not) did any decided configuration remove even one strict rule. In
+particular block acceleration, which was the main new idea, shows no effect. By Phase 2 a
+block system admits every interpretation the single-step system admits and possibly more; the
+search found none for any block size.
+
+### 6.5 Negative controls: correct, but they do not separate the problems
+
+No looping system was reported as terminating, and no certificate was rejected by the checker.
+
+The outcome for the 3n − 1 and 5n + 1 systems is the same as for the Collatz systems: ruled
+out in the small configurations and timed out in the large ones, with no rule removed. At the sizes reached,
+this method sees no difference between the Collatz map and maps for which the corresponding
+statement is false. That is what one would expect from a search that has found nothing, and it
+means the search gives no evidence about the conjecture in either direction.
+
+### 6.6 Trust
+
+- Every proof reported was verified by `checker/check.py`.
+- "Ruled out" verdicts are not certified. A sample was repeated with a second SAT solver;
+  see `results/phase3/crosscheck.md`. Both solvers are given the same formula by the same
+  prover code, so this guards against a solver bug, not against an encoding bug. The check on
+  the encoding is the control group.
+- All solving used the CaDiCaL build inside the python-sat package through a Python stand-in
+  for the command line, with one core per run. It is slower than a native solver, and the
+  time limits were short.
+
+### 6.7 Not done
+
+- Dimension 4 and above, and arctic interpretations with entries below zero.
+- The second search engine proposed in the original plan (a numerical relaxation to guess
+  interpretations for the SAT solver to confirm). It was not attempted.
+- A block form of the residue statements that proves exactly the paper's statement and not a
+  stronger one. That would need the deleted blocks to be those in which the class occurs at
+  any step of the block, which depends on more than k binary digits.
+- Certified "ruled out" verdicts (solver proofs checked by a proof checker).
