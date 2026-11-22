@@ -13,8 +13,9 @@ Problem groups
     full       the Collatz conjecture itself, in every encoding
     negative   systems that are known to loop: a proof here would be a bug
 
-Runs are appended to results/phase3/runs.jsonl as they finish, and a run already recorded
-there is not repeated, so the search can be stopped and resumed.
+Runs are appended to work/phase3/runs.jsonl as they finish, and a run already recorded there
+is not repeated, so the search can be stopped and resumed.  `--report` copies the run log and
+the certificates worth keeping into results/phase3/ and writes the summary there.
 
 Usage:
     phase3.py --list                       show the problems
@@ -43,8 +44,10 @@ from checks import Failure, check_rules, lemma_certificates, need, simulate  # n
 
 PROBLEMS = os.path.join(ROOT, 'problems', 'phase3')
 RESULTS = os.path.join(ROOT, 'results', 'phase3')
-CERTS = os.path.join(RESULTS, 'certificates')
-RUNS = os.path.join(RESULTS, 'runs.jsonl')
+# The search writes here while it runs; `--report` copies what is worth keeping to RESULTS.
+LIVE = os.path.join(ROOT, 'work', 'phase3')
+CERTS = os.path.join(LIVE, 'certificates')
+RUNS = os.path.join(LIVE, 'runs.jsonl')
 
 T, S = sy.COLLATZ, sy.SHIFTED
 BLOCKS = (2, 3, 4, 5, 6)
@@ -248,8 +251,26 @@ def run(groups, timeout, jobs, max_dimension, only):
 # Report
 # ---------------------------------------------------------------------------------------
 
+def publish(runs):
+    """Copy the run log, every complete proof, and partial proofs for the open problems."""
+    import shutil
+    kept = os.path.join(RESULTS, 'certificates')
+    shutil.rmtree(kept, ignore_errors=True)
+    os.makedirs(kept)
+    with open(os.path.join(RESULTS, 'runs.jsonl'), 'w') as f:
+        for r in sorted(runs, key=lambda r: (r['problem'], r['dimension'], r['values'],
+                                             r['type'], r['timeout'])):
+            f.write(json.dumps(r) + '\n')
+    for r in runs:
+        keep = r['status'] == 'QED' or (r['removed'] and r['group'] in ('target', 'full'))
+        name = f'{r["problem"]}__{r["type"]}-d{r["dimension"]}-w{r["values"]}.json'
+        if keep and os.path.exists(os.path.join(CERTS, name)):
+            shutil.copy(os.path.join(CERTS, name), os.path.join(kept, name))
+
+
 def report():
     runs = load_runs()
+    publish(runs)
     by_problem = {}
     for r in runs:
         by_problem.setdefault(r['problem'], []).append(r)
@@ -284,7 +305,9 @@ def report():
 
     say('# Phase 3 results')
     say()
-    say('Produced by `harness/phase3.py --report` from `results/phase3/runs.jsonl`.')
+    say('Produced by `harness/phase3.py --report`. Every run is listed in `runs.jsonl` next to')
+    say('this file; `certificates/` holds every complete proof and the partial proofs for the')
+    say('target and full problems.')
     say()
     say('- "proved" means the published prover found a complete proof and `checker/check.py`')
     say('  accepted it. The smallest configuration that succeeded is shown.')
