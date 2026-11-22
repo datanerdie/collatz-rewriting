@@ -1,0 +1,177 @@
+{
+ "problem": "S.c2-no1mod4.left.srs",
+ "rules": [
+  "abd ->= bd",
+  "bbd ->= iad",
+  "aad ->= ead",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ai ->= b",
+  "bi ->= ia",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab",
+  "ci |-> ca"
+ ],
+ "steps": [
+  {
+   "type": "arctic",
+   "dimension": 2,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       0,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       null,
+       0
+      ],
+      [
+       null,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null
+     ]
+    },
+    "c": {
+     "M": [
+      [
+       0,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      null,
+      null
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       null,
+       null
+      ],
+      [
+       null,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      1
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       0,
+       0
+      ],
+      [
+       null,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      0
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       0,
+       0
+      ],
+      [
+       null,
+       0
+      ]
+     ],
+     "v": [
+      0,
+      null
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       1,
+       0
+      ],
+      [
+       1,
+       null
+      ]
+     ],
+     "v": [
+      0,
+      null
+     ]
+    }
+   },
+   "removed": [
+    "ci |-> ca"
+   ]
+  }
+ ],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "2",
+   "-rw",
+   "4",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "UNSAT",
+  "seconds": 0.312,
+  "solver": "cadical195"
+ }
+}

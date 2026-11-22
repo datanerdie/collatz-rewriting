@@ -83,6 +83,8 @@ def test_rejects_wrong_claims():
     bad = copy.deepcopy(T02_CERT)
     bad['steps'][0]['removed'] = ['ce |-> cb']                 # two strict rules left over
     assert rejected(T02, bad)
+    partial = check(T02, bad, allow_partial=True)              # ... unless partial is allowed
+    assert partial['remaining_strict'] == ['cf |-> caa', 'cg |-> cab']
 
     bad = copy.deepcopy(T02_CERT)
     bad['steps'][0]['removed'].append('ad ->= d')              # weak rules cannot be removed

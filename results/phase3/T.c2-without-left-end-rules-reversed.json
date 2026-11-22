@@ -1,0 +1,82 @@
+{
+ "problem": "T.c2-without-left-end-rules-reversed.srs",
+ "steps": [
+  {
+   "type": "natural",
+   "dimension": 1,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      0
+     ]
+    }
+   },
+   "removed": [
+    "da -> d",
+    "dba -> daf",
+    "dbb -> dbg",
+    "ea -> ae",
+    "fa -> be",
+    "ga -> af",
+    "eb -> bf",
+    "fb -> ag",
+    "gb -> bg"
+   ]
+  }
+ ]
+}

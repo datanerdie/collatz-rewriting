@@ -121,6 +121,45 @@ class System:
         return ''.join(f'{l} {arrow if (l, r) in strict else "->="} {r}\n'
                        for l, r in self.rules)
 
+    def search_problem(self, side):
+        """The two forms in which termination of the system is searched for.
+
+        'left'   the left-end rules are strict and applied at the left end; the rest are weak.
+        'right'  the dynamic rules are strict and applied at the right end; the rest are weak.
+                 Written with every string reversed, so that the right end becomes the left.
+
+        If either problem is solved the system terminates, provided the system without its
+        left-end rules and the system without its dynamic rules both terminate.
+        """
+        if side == 'left':
+            return self.problem(strict=self.left, top=True)
+        assert side == 'right'
+        return ''.join(f'{l[::-1]} {"|->" if (l, r) in self.dynamic else "->="} {r[::-1]}\n'
+                       for l, r in self.rules)
+
+    def residue(self, rule):
+        """(modulus, residue): the numbers n a dynamic rule applies to are n = residue mod
+        modulus, where n is the Collatz number (one less than the value in shifted systems)."""
+        A, B = affine(rule[0])
+        return A, (B - (self.lowest - 1)) % A
+
+    def without_classes(self, modulus, classes):
+        """The system without the dynamic rules for the given residue classes of n."""
+        keep = []
+        for rule in self.dynamic:
+            A, B = self.residue(rule)
+            hit = {(B + A * t) % modulus in classes for t in range(modulus)}
+            assert len(hit) == 1, f'{rule} straddles the classes'
+            if not hit.pop():
+                keep.append(rule)
+        assert len(keep) < len(self.dynamic), 'no rule removed'
+        tag = 'or'.join(str(c) for c in sorted(classes))
+        out = System(f'{self.name}-no{tag}mod{modulus}',
+                     f'{self.title}, without the rules for n ≡ {tag} (mod {modulus})',
+                     keep, self.inner, self.left, self.step, self.stop, self.lowest, self.power,
+                     self.unit)
+        return out
+
 
 # ---------------------------------------------------------------------------------------
 # The system T of the paper:  n -> n/2  or  (3n+1)/2, stopping at 1.
@@ -290,3 +329,37 @@ def subsystem_problem(k):
 def reversed_strict(rules):
     """All rules strict, every string reversed (termination is invariant under reversal)."""
     return ''.join(f'{l[::-1]} -> {r[::-1]}\n' for l, r in rules)
+
+
+# ---------------------------------------------------------------------------------------
+# Context systems: single steps, but the growing step reads the last `bits` binary digits.
+# ---------------------------------------------------------------------------------------
+
+def contextual(base, bits):
+    """`base` (T or S) with one growing rule for each residue class modulo 2^bits.
+
+    The growing step is the odd step of T or the even step of U.  Applied to 2^bits*x + r it
+    gives 3*2^(bits-1)*x + c, written as one ternary digit followed by bits-1 binary digits.
+    For T this is the system the paper calls T^(Odd/4) (bits = 2) or T^(Odd/8) (bits = 3).
+    Rewriting stops at every value too small to have `bits` binary digits after its marker.
+    """
+    import itertools
+    assert base.name in ('T', 'S') and bits >= 2
+    shifted = base.name == 'S'
+    growing = 0 if shifted else 1                   # parity of the values that grow
+    dynamic = [r for r in base.dynamic if affine(r[0])[1] % 2 != growing]
+    for block in itertools.product(BINARY, repeat=bits):
+        block = ''.join(block)
+        A, B = affine(block)
+        if B % 2 != growing:
+            continue
+        A, B = iterate_affine(base.step, A, B, 1)   # 3*2^(bits-1)*x + B
+        q, rest = divmod(B, 2 ** (bits - 1))
+        assert 0 <= q <= 2
+        tail = bin(rest)[2:].zfill(bits - 1).replace('0', 'a').replace('1', 'b')
+        dynamic.append((block + RIGHT_MARKER, 'efg'[q] + tail + RIGHT_MARKER))
+    small = [v for v in range(base.lowest, 2 ** bits) if v % 2 == growing]
+    return System(f'{base.name}.c{bits}',
+                  f'{base.title}, growing step split by residue modulo {2 ** bits}',
+                  dynamic, base.inner, base.left, base.step,
+                  stop=set(base.stop) | set(small), lowest=base.lowest)

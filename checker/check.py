@@ -246,8 +246,12 @@ def load_step(step, symbols):
     return S, interp
 
 
-def check(problem_text, certificate, log=None):
-    """Return a summary dict, or raise CertificateError."""
+def check(problem_text, certificate, log=None, allow_partial=False):
+    """Return a summary dict, or raise CertificateError.
+
+    With `allow_partial`, a certificate whose steps are all valid but which leaves strict
+    rules behind is not rejected; the rules left are reported under 'remaining_strict'.
+    """
     say = log if log is not None else (lambda *_: None)
     rules, is_top = parse_problem(problem_text)
     remaining = list(rules)
@@ -288,9 +292,10 @@ def check(problem_text, certificate, log=None):
                         'removed': [rule_str(r) for r in to_remove]})
 
     left = [rule_str(r) for r in remaining if r.strict]
-    if left:
+    if left and not allow_partial:
         raise CertificateError('strict rules remain after the last step: ' + ', '.join(left))
     return {'kind': 'relative top termination' if is_top else 'relative termination',
+            'remaining_strict': left,
             'strict_rules': [rule_str(r) for r in rules if r.strict],
             'weak_rules': [rule_str(r) for r in rules if not r.strict],
             'steps': summary}

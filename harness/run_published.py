@@ -59,6 +59,21 @@ def main():
     import main as prover
 
     steps = []
+    with open(problem) as f:
+        rules = [line.strip() for line in f if line.strip()]
+    start = time.time()
+
+    def save(status):
+        """Write the certificate so far; called after every step so a killed run leaves one."""
+        with open(out + '.tmp', 'w') as f:
+            json.dump({'problem': os.path.basename(problem), 'rules': rules, 'steps': steps,
+                       'prover': {'options': options, 'status': status,
+                                  'seconds': round(time.time() - start, 3),
+                                  'solver': os.environ.get('PYSAT_SOLVER', 'cadical195')}},
+                      f, indent=1)
+            f.write('\n')
+        os.replace(out + '.tmp', out)
+
     original_check = decoder.Decoder.check
 
     def recording_check(self, system, interp):
@@ -75,30 +90,22 @@ def main():
         removable = original_check(self, system, interp)
         steps.append({'type': kind, 'dimension': d, 'interpretation': table,
                       'removed': [str(r) for r in removable]})
+        save('running')
         return removable
 
     decoder.Decoder.check = recording_check
 
+    save('running')
     sys.argv = ['main.py', problem] + options
-    start = time.time()
     try:
         prover.main()
         code = 0
     except SystemExit as e:
         code = e.code
-    elapsed = time.time() - start
-
-    with open(problem) as f:
-        rules = [line.strip() for line in f if line.strip()]
     status = {19: 'QED', 11: 'strict rules remain', 29: 'UNSAT'}.get(code, f'exit {code}')
-    with open(out, 'w') as f:
-        json.dump({'problem': os.path.basename(problem), 'rules': rules, 'steps': steps,
-                   'prover': {'options': options, 'status': status,
-                              'seconds': round(elapsed, 3),
-                              'solver': os.environ.get('PYSAT_SOLVER', 'cadical195')}},
-                  f, indent=1)
-        f.write('\n')
-    print(f'\n[{status}] {len(steps)} step(s), {elapsed:.2f} s -> {out}', file=sys.stderr)
+    save(status)
+    print(f'\n[{status}] {len(steps)} step(s), {time.time() - start:.2f} s -> {out}',
+          file=sys.stderr)
     sys.exit(0 if code == 19 else 1)
 
 

@@ -1,0 +1,36 @@
+{
+ "problem": "T.k2-no1mod4.left.srs",
+ "rules": [
+  "aad ->= d",
+  "bad ->= gd",
+  "bbd ->= ggd",
+  "ae ->= ea",
+  "af ->= eb",
+  "ag ->= fa",
+  "be ->= fb",
+  "bf ->= ga",
+  "bg ->= gb",
+  "ce |-> cb",
+  "cf |-> caa",
+  "cg |-> cab"
+ ],
+ "steps": [],
+ "prover": {
+  "options": [
+   "-i",
+   "arctic",
+   "-d",
+   "3",
+   "-rw",
+   "6",
+   "-any",
+   "--no-print",
+   "-work",
+   "1",
+   "-noshuf"
+  ],
+  "status": "running",
+  "seconds": 0.0,
+  "solver": "cadical195"
+ }
+}
