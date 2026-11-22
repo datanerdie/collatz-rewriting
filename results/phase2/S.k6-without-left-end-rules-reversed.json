@@ -1,0 +1,155 @@
+{
+ "problem": "S.k6-without-left-end-rules-reversed.srs",
+ "steps": [
+  {
+   "type": "natural",
+   "dimension": 1,
+   "interpretation": {
+    "a": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "b": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      1
+     ]
+    },
+    "d": {
+     "M": [
+      [
+       1
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "i": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "e": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "f": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      0
+     ]
+    },
+    "g": {
+     "M": [
+      [
+       2
+      ]
+     ],
+     "v": [
+      0
+     ]
+    }
+   },
+   "removed": [
+    "daaaaaa -> deeeeee",
+    "dbaaaaa -> di",
+    "dabaaaa -> dgee",
+    "dbbaaaa -> defe",
+    "daabaaa -> defe",
+    "dbabaaa -> dge",
+    "dabbaaa -> dge",
+    "dbbbaaa -> dge",
+    "daaabaa -> dgefe",
+    "dbaabaa -> def",
+    "dababaa -> dgffe",
+    "dbbabaa -> def",
+    "daabbaa -> dege",
+    "dbabbaa -> def",
+    "dabbbaa -> def",
+    "dbbbbaa -> defge",
+    "daaaaba -> defge",
+    "dbaaaba -> dg",
+    "dabaaba -> deef",
+    "dbbaaba -> deeef",
+    "daababa -> deeef",
+    "dbababa -> dg",
+    "dabbaba -> dg",
+    "dbbbaba -> dgef",
+    "daaabba -> dgef",
+    "dbaabba -> dgf",
+    "dababba -> deff",
+    "dbbabba -> dgf",
+    "daabbba -> deeeff",
+    "dbabbba -> dgff",
+    "dabbbba -> dgff",
+    "dbbbbba -> dgfff",
+    "daaaaab -> dgffff",
+    "dbaaaab -> dei",
+    "dabaaab -> deegf",
+    "dbbaaab -> deg",
+    "daabaab -> deg",
+    "dbabaab -> deeg",
+    "dabbaab -> deeg",
+    "dbbbaab -> deeg",
+    "daaabab -> deeggf",
+    "dbaabab -> dei",
+    "dababab -> deeeeg",
+    "dbbabab -> dei",
+    "daabbab -> defeg",
+    "dbabbab -> defg",
+    "dabbbab -> defg",
+    "dbbbbab -> defg",
+    "daaaabb -> defgeg",
+    "dbaaabb -> deei",
+    "dabaabb -> dgg",
+    "dbbaabb -> dgfg",
+    "daababb -> dgfg",
+    "dbababb -> deei",
+    "dabbabb -> deei",
+    "dbbbabb -> deegg",
+    "daaabbb -> deegg",
+    "dbaabbb -> deeei",
+    "dababbb -> defgg",
+    "dbbabbb -> deeei",
+    "daabbbb -> dgfgg",
+    "dbabbbb -> deeeei",
+    "dabbbbb -> deeeei",
+    "dbbbbbb -> deeeeei",
+    "ea -> ae",
+    "fa -> be",
+    "ga -> af",
+    "eb -> bf",
+    "fb -> ag",
+    "gb -> bg",
+    "ia -> b",
+    "ib -> ai"
+   ]
+  }
+ ]
+}

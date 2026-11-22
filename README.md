@@ -36,14 +36,21 @@ idea is a variation on existing work, not a new one. It is included as a compari
 |---|---|---|
 | 0 | Reproduce the 11 published "one rule left out" proofs; check them with an independent checker | done: all 11 found and accepted, see `results/phase0/summary.md` |
 | 1 | Fix the shifted system and prove "terminates ⇔ Collatz" for it; build correct 3n−1 and 5n+1 siblings | done: proof in `docs/phase1-shifted-system.md`, checks in `results/phase1/summary.md` |
-| 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | not started |
+| 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | done: argument in `docs/phase2-block-acceleration.md`, checks in `results/phase2/summary.md` |
 | 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record SAT / UNSAT / timeout | not started |
 | 4 | Write up what the grid shows | not started |
 
 Controls in Phase 3: the paper's solvable variants must stay solvable in the new encodings
 (otherwise the encoding is worse and that branch stops), and the 3n−1 and 5n+1 systems, which
-have extra cycles, must never be reported as terminating. Any claimed proof for the full system
+have extra cycles, must never be reported as terminating. Phase 2 showed that this second
+control is available only for the single-step systems and for block sizes up to 4: with larger
+blocks the accelerated siblings no longer have a known loop. Any claimed proof for the full system
 is treated as a bug until it passes the independent checker and a second prover.
+
+Proposed addition to Phase 3, not yet agreed: the paper leaves open whether a non-convergent
+trajectory must visit the residue classes 1, 5 and 7 modulo 8 (its Conjectures 4.11–4.13).
+These are much nearer targets than the full conjecture and a natural first test of whether the
+new encodings prove anything the original one does not.
 
 ## Layout
 
@@ -56,8 +63,11 @@ is treated as a bug until it passes the independent checker and a second prover.
 | `harness/cadical` | Stand-in for the `cadical` command line used by the published prover, backed by the `python-sat` package. |
 | `harness/phase0.py` | Runs Phase 0 end to end. |
 | `harness/rewrite.py` | Small rewriting engine: all successors of a string, full rewrite graphs, cycle detection. |
-| `harness/phase1.py` | Runs the Phase 1 checks: rule arithmetic, termination lemmas, exhaustive simulation, sibling loops. |
+| `harness/checks.py` | The checks shared by Phases 1 and 2: rule arithmetic, termination lemmas, exhaustive simulation, random runs, loop search. |
+| `harness/phase1.py` | Runs the Phase 1 checks on the shifted systems and the siblings. |
+| `harness/phase2.py` | Builds the block-accelerated systems for block sizes 2–6 and runs the same checks on them. |
 | `docs/phase1-shifted-system.md` | Definition of the shifted systems S and S2 and the proof that each terminates exactly when the Collatz conjecture holds. |
+| `docs/phase2-block-acceleration.md` | Definition of the block-accelerated systems, the same equivalence for them, and what acceleration does to the negative controls. |
 | `scripts/fetch_baseline.sh` | Fetches the code published with the paper at a pinned commit into `third_party/` (not committed: it has no licence file). |
 | `problems/`, `results/` | Problem files and the certificates and summaries produced for them. |
 
@@ -81,6 +91,10 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
 ```bash
 python3 harness/phase1.py
+```
+
+```bash
+python3 harness/phase2.py
 ```
 
 To check a single certificate:

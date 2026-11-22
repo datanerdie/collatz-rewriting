@@ -66,11 +66,16 @@ class System:
     step     {0: (p, q), 1: (p, q)}: the map sends a value n of that parity to (p*n + q)/2
     stop     the values at which the simulated trajectory is finished
     """
+    # Further attributes are described in __init__.
 
-    def __init__(self, name, title, dynamic, inner, left, step, stop):
+    def __init__(self, name, title, dynamic, inner, left, step, stop, lowest=1, power=1,
+                 unit=None):
         self.name, self.title = name, title
         self.dynamic, self.inner, self.left = list(dynamic), list(inner), list(left)
         self.step, self.stop = step, frozenset(stop)
+        self.lowest = lowest        # smallest number in the domain of the map
+        self.power = power          # how many steps of the map one dynamic rule applies
+        self.unit = unit            # single-step rules the block rules are derived from
 
     @property
     def rules(self):
@@ -93,9 +98,12 @@ class System:
         return [s for s in self.symbols if s in LEFT_MARKERS]
 
     def apply_map(self, n):
-        p, q = self.step[n % 2]
-        assert (p * n + q) % 2 == 0
-        return (p * n + q) // 2
+        """What one dynamic rule does to a value: `power` steps of the map."""
+        for _ in range(self.power):
+            p, q = self.step[n % 2]
+            assert (p * n + q) % 2 == 0
+            n = (p * n + q) // 2
+        return n
 
     def encode(self, n):
         """The canonical binary string for n."""
@@ -149,7 +157,7 @@ SHIFTED = System(
              ('bbd', 'iad')],   # tt|> -> sf|>    4x + 3  -> 2x + 2 = 2(x + 1)
     inner=CARRY + INCREMENT,
     left=LEFT + [('ci', 'ca')],                     # 1 + 1 = 2
-    step={0: (3, 0), 1: (1, 1)}, stop={3})
+    step={0: (3, 0), 1: (1, 1)}, stop={3}, lowest=2)
 
 # S2: two left markers standing for 2 and 3, so neither dynamic rule needs a context.
 SHIFTED_TWO_MARKERS = System(
@@ -160,7 +168,7 @@ SHIFTED_TWO_MARKERS = System(
     left=[('pe', 'qa'), ('pf', 'qb'), ('pg', 'paa'),        # 6, 7, 8
           ('qe', 'pab'), ('qf', 'pba'), ('qg', 'pbb'),      # 9, 10, 11
           ('pi', 'q'), ('qi', 'pa')],                       # 3, 4
-    step={0: (3, 0), 1: (1, 1)}, stop={2, 3})
+    step={0: (3, 0), 1: (1, 1)}, stop={2, 3}, lowest=2)
 
 # ---------------------------------------------------------------------------------------
 # Siblings with extra cycles.  None of these may ever be reported as terminating.
@@ -192,6 +200,71 @@ FIVE_N_PLUS_ONE = System(
 
 SYSTEMS = [COLLATZ, SHIFTED, SHIFTED_TWO_MARKERS,
            THREE_N_MINUS_ONE, SHIFTED_THREE_N_MINUS_ONE, FIVE_N_PLUS_ONE]
+
+
+# ---------------------------------------------------------------------------------------
+# Block acceleration: one dynamic rule per block of k binary digits, applying k steps at once.
+# ---------------------------------------------------------------------------------------
+# Value-preserving rules that let an increment pass a ternary digit:
+# 3x + 1 = (3x) + 1,  3x + 2 = (3x + 1) + 1,  3(x + 1) = (3x + 2) + 1.
+TERNARY_INCREMENT = [('ei', 'f'), ('fi', 'g'), ('gi', 'ie')]
+
+
+def iterate_affine(step, A, B, k):
+    """k steps of the map on the numbers A*x + B, as (A', B').  Needs 2^k to divide A."""
+    for _ in range(k):
+        assert A % 2 == 0, 'the parity of A*x + B must not depend on x'
+        p, q = step[B % 2]
+        assert (p * B + q) % 2 == 0
+        A, B = p * A // 2, (p * B + q) // 2
+    return A, B
+
+
+def digits_for(A, B, base, digits, increment):
+    """A digit string whose function is x -> A*x + B, where A is a power of `base`.
+
+    If 0 <= B < A it is the base-`base` numeral of B, padded to the length of A.  If B = A the
+    function is A*(x + 1): an increment followed by zeros.
+    """
+    j, power = 0, 1
+    while power < A:
+        power, j = power * base, j + 1
+    assert power == A, f'{A} is not a power of {base}'
+    head = ''
+    if B == A and increment:
+        head, B = 'i', 0
+    assert 0 <= B < A, f'cannot write x -> {A}x + {B} with {j} digits'
+    out = []
+    for _ in range(j):
+        B, d = divmod(B, base)
+        out.append(digits[d])
+    return head + ''.join(reversed(out))
+
+
+def accelerate(base, k):
+    """The system `base` with its dynamic rules replaced by 2^k block rules.
+
+    Each block rule rewrites k binary digits at the right end into the digits of k steps of
+    the map.  No rule applies once fewer than k binary digits remain, so the accelerated system
+    stops at every value below 2^k rather than at the base system's stop value.
+    """
+    import itertools
+    shifted = base.name.startswith('S')
+    quinary = any(s in 'vwxyz' for s in base.symbols)
+    radix, digits = (5, 'vwxyz') if quinary else (3, 'efg')
+    with_increment = 'i' in base.symbols
+    dynamic = []
+    for block in itertools.product(BINARY, repeat=k):
+        block = ''.join(block)
+        A, B = iterate_affine(base.step, *affine(block), k)
+        dynamic.append((block + RIGHT_MARKER,
+                        digits_for(A, B, radix, digits, with_increment) + RIGHT_MARKER))
+    # Single-step, context-free rules from which every block rule can be derived.
+    unit = {'T': DYNAMIC, 'S': SHIFTED_TWO_MARKERS.dynamic}.get(base.name, base.dynamic)
+    unit = list(unit) + base.inner + (TERNARY_INCREMENT if with_increment else [])
+    return System(f'{base.name}.k{k}', f'{base.title}, in blocks of {k} steps',
+                  dynamic, base.inner, base.left, base.step, stop=range(1, 2 ** k),
+                  lowest=base.lowest, power=k, unit=unit)
 
 
 # ---------------------------------------------------------------------------------------
