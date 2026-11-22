@@ -119,8 +119,10 @@ The tables are in `results/phase3/summary.md`. This section says how to read the
 
 ### 6.1 How far the search reached
 
-Every problem was given 30 configurations. Controls and targets had 120 seconds per run, the
-full and negative groups 60 seconds.
+Every problem was given 30 configurations, 130 problems in all: 3,731 prover runs and about
+17 hours of solver time on four cores. Controls and targets had 120 seconds per run, the full
+and negative groups 60 seconds. 17 runs ended in a proof, 3,155 in "ruled out" and 559 in a
+timeout.
 
 | Configurations | Outcome |
 |---|---|
@@ -163,9 +165,10 @@ Each cell is the smallest successful configuration over the two search forms.
 ### 6.3 Targets: nothing new
 
 No proof was found for "visits 1 mod 8", "5 mod 8", "7 mod 8" or "5 or 7 mod 8" in any of the
-four encodings or either search form. The only partial results remove a rule that is trivially
-used finitely often in the shifted encoding (`◁s → ◁f` in the left form, `ft▷ → t▷` in the
-right form); they say nothing about the statements.
+four encodings or either search form. The only partial results are in the shifted encoding
+`S.c3`. Each removes one rule and leaves three or four: `◁s → ◁f` in the left form when class
+7 is among those deleted, and `ft▷ → t▷` in the right form when class 5 is. They show that
+this one rule is used only finitely often in that system; they do not prove the statements.
 
 For the paper's encoding this was certain in advance, since the authors searched much further.
 For the shifted and block encodings it is a new, small negative result: they do not make the

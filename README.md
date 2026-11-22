@@ -37,7 +37,7 @@ idea is a variation on existing work, not a new one. It is included as a compari
 | 0 | Reproduce the 11 published "one rule left out" proofs; check them with an independent checker | done: all 11 found and accepted, see `results/phase0/summary.md` |
 | 1 | Fix the shifted system and prove "terminates ⇔ Collatz" for it; build correct 3n−1 and 5n+1 siblings | done: proof in `docs/phase1-shifted-system.md`, checks in `results/phase1/summary.md` |
 | 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | done: argument in `docs/phase2-block-acceleration.md`, checks in `results/phase2/summary.md` |
-| 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record proved / ruled out / timed out. Includes the residue-class statements modulo 8 that the paper leaves open | controls, targets and full problems done; block negative controls still running: design and findings in `docs/phase3-search.md`, tables in `results/phase3/summary.md` |
+| 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record proved / ruled out / timed out. Includes the residue-class statements modulo 8 that the paper leaves open | done: design and findings in `docs/phase3-search.md`, tables in `results/phase3/summary.md` |
 | 4 | Write up what the grid shows | short version in `docs/phase3-search.md`, section 6; no fuller write-up yet |
 
 Controls in Phase 3: the paper's solvable variants must stay solvable in the new encodings

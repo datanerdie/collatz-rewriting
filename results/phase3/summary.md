@@ -14,7 +14,7 @@ target and full problems.
 - "left" and "right" are the two search forms: left-end rules strict at the left end,
   or dynamic rules strict at the right end. A proof in either form is a proof.
 
-3,326 prover runs are recorded, with time limits of 60, 120 seconds and dimensions 1 to 3.
+3,731 prover runs are recorded, with time limits of 60, 120 seconds and dimensions 1 to 3.
 
 ## Controls: statements the paper proved
 
@@ -140,15 +140,15 @@ Each of these has an explicit loop, so "proved" in this table would be a bug. Pa
 | T- | 11 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
 | S- | 11 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
 | T5 | 17 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
-| T-.k2 | 13 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 3 timed out |
-| S-.k2 | 13 | no proof: 25 ruled out, 1 timed out | no proof: 25 ruled out, 1 timed out |
-| T5.k2 | 19 | no proof: 25 ruled out, 0 timed out | not run |
-| T-.k3 | 17 | not run | not run |
-| S-.k3 | 17 | not run | not run |
-| T5.k3 | 23 | not run | not run |
-| T-.k4 | 25 | not run | not run |
-| S-.k4 | 25 | not run | not run |
-| T5.k4 | 31 | not run | not run |
+| T-.k2 | 13 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| S-.k2 | 13 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| T5.k2 | 19 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| T-.k3 | 17 | no proof: 25 ruled out, 5 timed out | no proof: 24 ruled out, 6 timed out |
+| S-.k3 | 17 | no proof: 25 ruled out, 5 timed out | no proof: 24 ruled out, 6 timed out |
+| T5.k3 | 23 | no proof: 25 ruled out, 5 timed out | no proof: 24 ruled out, 6 timed out |
+| T-.k4 | 25 | no proof: 25 ruled out, 5 timed out | no proof: 24 ruled out, 6 timed out |
+| S-.k4 | 25 | no proof: 25 ruled out, 5 timed out | no proof: 25 ruled out, 5 timed out |
+| T5.k4 | 31 | no proof: 25 ruled out, 5 timed out | no proof: 24 ruled out, 6 timed out |
 
 ## Integrity
 
