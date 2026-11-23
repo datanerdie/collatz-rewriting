@@ -806,14 +806,56 @@ when the condition of the corollary is added.
 
 ## 6. Results
 
-The second pass for the right form is running; this section will be filled in when it
-finishes.
+The full tables are in `results/dimension2/summary.md`, the verdict for every pattern in
+the `.jsonl` files next to it. After removing patterns that contradict a carry rule and one
+of each pair related by exchanging the coordinates, 7,495 zero patterns remain in each form.
+
+| Form | Patterns | Refuted by z3, first pass | Theorem 6 | Theorem 8 | Refuted by z3, second pass | Interpretation found | Undecided |
+|---|---|---|---|---|---|---|---|
+| left | 7,495 | 7,350 | 96 | 26 | 17 | 0 | 6 |
+| right | 7,495 | 7,318 | 94 | 24 | 15 | 0 | 44 |
+
+The columns "Theorem 6" and "Theorem 8" count only patterns that the first pass left
+undecided. In all, the two theorems cover 1,873 of the 7,495 patterns in each form
+(Theorem 6: 1,043, Theorem 8: 1,512). On the patterns they cover, z3 by itself had refuted
+most and left the rest undecided; it never found an interpretation for one of them. So the solver and the theorems do not contradict each other anywhere.
+
+No interpretation was found for any pattern.
+
+The undecided patterns are all triangular: every digit matrix is upper triangular.
+
+- Left form, 6 patterns. In each the matrix of t has all three entries on and above the
+  diagonal positive. In five of them the matrices of 0 and 1 have a zero second row.
+- Right form, 44 patterns. In each the matrices of f and of t have positive entries in the
+  top left and top right corners.
+
+They are listed in `results/dimension2/summary.md`. For these z3 gave no answer within the
+limits used (5 to 20 seconds for each call of the solver, several hundred seconds for a
+pattern), with all the
+conditions of section 5.
+
+`harness/theorem7_check.py` tests Theorems 7 and 8 on examples; its output is in
+`results/dimension2/theorem7-check.md`. Among the matrices with entries from 0 to 3 there are
+39,396 solutions of the six carry equalities with both entries off the diagonal of the
+matrix of f positive, and each falls under a case of Theorem 7. For the 1,564 of them in
+which the matrix of 1 or of 2 is not zero, z3 confirms in both forms that no choice of the
+vectors and of r makes a strict rule strictly decreasing.
 
 ## 7. Status
 
-- Written proofs: Lemmas I to IV, Corollaries 1, 2 and 10, and Theorems 5 to 8. They have
-  not been read by anyone else or checked by a proof assistant. The self-test of
-  `harness/dimension2.py` and `harness/theorem7_check.py` test their statements on
-  examples.
-- The case analysis for the patterns that the theorems do not cover is not complete, so
-  dimension 2 is not settled.
+- **Proved in writing:** Lemmas I to IV, Corollaries 1, 2 and 10, and Theorems 5 to 8. An
+  automated independent read of section 4 found no error and six gaps in the write-up,
+  which have been repaired. No person has read the proofs and no proof assistant has
+  checked them. The self-test of `harness/dimension2.py` and `harness/theorem7_check.py`
+  test the statements on examples.
+- **Rests on z3:** the 7,350 + 17 patterns in the left form and the 7,318 + 15 in the
+  right form that the theorems were not used for. A verdict "refuted" is an answer of the
+  solver and has no certificate that can be checked independently.
+- **Undecided:** 6 patterns in the left form and 44 in the right form, all triangular.
+- **Conclusion:** dimension 2 is not settled. What is established is that a
+  two-dimensional natural interpretation for T, if one exists, has upper triangular (or,
+  with the coordinates exchanged, lower triangular) digit matrices with one of the 50
+  undecided patterns, provided the solver's verdicts are correct. Without relying on the
+  solver: the matrix of f does not have both entries off the diagonal positive, the digit
+  matrices are not irreducible with the matrices of f, t and 0 invertible, and the
+  hypotheses of Theorems 5 and 6 fail.

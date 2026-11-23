@@ -70,6 +70,13 @@ the size of its coefficients (`docs/dimension1.md`, Theorem 4). The paper names 
 question, whether any matrix interpretation can prove its system terminating, as open; this
 settles the smallest case only.
 
+Dimension 2 is partly done (`docs/dimension2.md`). Written proofs exclude every
+two-dimensional natural interpretation in which the matrix of f, of t or of 2 mixes the two
+coordinates, apart from side cases (Theorems 5 to 8). For the rest the question was split
+into 7,495 zero patterns per form and given to z3: it refuted all but 6 patterns in the left
+form and 44 in the right form, and found no interpretation. The undecided patterns are all
+triangular. So dimension 2 is not settled.
+
 ## Layout
 
 | Path | What it is |
