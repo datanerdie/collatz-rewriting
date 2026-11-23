@@ -23,13 +23,16 @@ z3 cannot answer this as one question, so it is split (docs/dimension2.md has th
      so that its smallest positive entry is 1; the strict rule decreases by at least 1).  An
      integer solution gives a real solution of this kind, so "no real solution" implies "no
      integer solution".
+  5. Optionally (--t4), a part that is still undecided is split once more on a matrix entry
+     x that the pattern makes positive: x = 1 or x >= 2.  Every such entry is tried until
+     both halves of one split are refuted.
 
 Verdict per pattern: "none" (every part refuted), "found" (z3 produced an integer solution
 and checker/check.py accepted the certificate built from it), "undecided".
 
 Usage:
   dimension2.py --selftest
-  dimension2.py --form left|right [--jobs N] [--t1 S] [--t2 S] [--t3 S] [--out DIR]
+  dimension2.py --form left|right [--jobs N] [--t1 S] [--t2 S] [--t3 S] [--t4 S] [--out DIR]
                 [--again]       # re-run the patterns recorded as undecided
   dimension2.py --summary [--out DIR]
 """
@@ -298,7 +301,7 @@ def solve(constraints, real, timeout):
     return str(answer), (solver.model() if answer == z3.sat else None)
 
 
-def decide(problem_text, pattern, t1, t2, t3):
+def decide(problem_text, pattern, t1, t2, t3, t4=0):
     """Verdict for one zero pattern: ('none' | 'found' | 'undecided', detail)."""
     rules, is_top = parse_problem(problem_text)
     assert is_top
@@ -318,17 +321,34 @@ def decide(problem_text, pattern, t1, t2, t3):
     if answer == 'sat':
         return found(model)
     real = Encoding(rules, pattern, real=True)
+
+    def both(rp, name, extra, limit_int, limit_real):
+        """One part with extra conditions on matrix entries: integers, then real numbers."""
+        answer, model = solve(enc.part(rp, name) + [f(enc) for f in extra], False, limit_int)
+        if answer != 'unknown':
+            return answer, model, 'int'
+        answer, _ = solve(real.part(rp, name) + [f(real) for f in extra], True, limit_real)
+        # a real solution says nothing about the integers
+        return ('unsat' if answer == 'unsat' else 'undecided'), None, 'real'
+
     parts = []
     for rp, name in enc.parts():
-        answer, model = solve(enc.part(rp, name), False, t2)
-        how = 'int'
+        answer, model, how = both(rp, name, [], t2, t3)
         if answer == 'sat':
             return found(model)
-        if answer != 'unsat':
-            answer, _ = solve(real.part(rp, name), True, t3)
-            how = 'real'
-            if answer != 'unsat':
-                answer = 'undecided'       # a real solution says nothing about the integers
+        if answer != 'unsat' and t4:
+            # Split on one positive matrix entry x: either x = 1 or x >= 2.
+            for s, m in zip(DIGITS, pattern):
+                for i, j in BITS:
+                    if not bit(m, i, j) or answer == 'unsat':
+                        continue
+                    halves = [both(rp, name, [extra], t4, t4) for extra in
+                              (lambda e: e.M[s][i][j] == 1, lambda e: e.M[s][i][j] >= 2)]
+                    for half in halves:
+                        if half[0] == 'sat':
+                            return found(half[1])
+                    if all(half[0] == 'unsat' for half in halves):
+                        answer, how = 'unsat', f'split on M{s}{i}{j}'
         parts.append([rp, name, answer, how])
     verdict = 'none' if all(x[2] == 'unsat' for x in parts) else 'undecided'
     return verdict, {'how': 'parts', 'parts': parts}
@@ -403,9 +423,9 @@ def selftest():
 # ---------------------------------------------------------------------------------------
 
 def work(job):
-    form, p, t1, t2, t3 = job
+    form, p, t1, t2, t3, t4 = job
     start = time.time()
-    verdict, detail = decide(systems.COLLATZ.search_problem(form), tuple(p), t1, t2, t3)
+    verdict, detail = decide(systems.COLLATZ.search_problem(form), tuple(p), t1, t2, t3, t4)
     return {'form': form, 'pattern': list(p), 'class': pattern_class(p), 'verdict': verdict,
             'seconds': round(time.time() - start, 1), 'detail': detail}
 
@@ -431,7 +451,7 @@ def run(args):
     else:
         todo = [p for p in todo if p not in done]
     print(f'{args.form} form: {len(done)} patterns recorded, {len(todo)} to do', flush=True)
-    jobs = [(args.form, p, args.t1, args.t2, args.t3) for p in todo]
+    jobs = [(args.form, p, args.t1, args.t2, args.t3, args.t4) for p in todo]
     with multiprocessing.Pool(args.jobs) as pool, open(path, 'a') as f:
         for r in pool.imap_unordered(work, jobs):
             f.write(json.dumps(r) + '\n')
@@ -480,10 +500,12 @@ def summary(args):
         whole = sum(1 for r in rs if r['verdict'] == 'none' and r['detail']['how'] == 'whole')
         split = [r for r in rs if r['verdict'] == 'none' and r['detail']['how'] == 'parts']
         with_real = sum(1 for r in split if any(x[3] == 'real' for x in r['detail']['parts']))
+        with_split = sum(1 for r in split
+                         if any(x[3].startswith('split') for x in r['detail']['parts']))
         details += ['',
                     f'Refuted as one integer problem: {whole:,}. Refuted after splitting: '
                     f'{len(split)}, of which {with_real} needed the real-number procedure for '
-                    'at least one part.']
+                    f'at least one part and {with_split} a further split on a matrix entry.']
         open_ = [r for r in rs if r['verdict'] == 'undecided']
         if open_:
             details += ['', 'Undecided patterns (entries of each digit matrix that may be '
@@ -509,6 +531,9 @@ def main():
     ap.add_argument('--t1', type=float, default=10, help='seconds, whole pattern, integers')
     ap.add_argument('--t2', type=float, default=30, help='seconds per part, integers')
     ap.add_argument('--t3', type=float, default=30, help='seconds per part, real numbers')
+    ap.add_argument('--t4', type=float, default=0,
+                    help='seconds per half when an undecided part is split on a matrix entry '
+                         '(0: no splitting)')
     ap.add_argument('--again', action='store_true',
                     help='re-run the patterns recorded as undecided (with other time limits)')
     ap.add_argument('--out', default=os.path.join(ROOT, 'results', 'dimension2'))
