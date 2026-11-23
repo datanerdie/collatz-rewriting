@@ -10,9 +10,10 @@ the number obtained by appending those digits. Every carry rule is then an equal
 dimension 2 the question is no longer whether the carries can be respected, but whether any
 such representation can be combined with the end rules.
 
-This note has three parts: a lemma about the carry rules that holds in every dimension, a
-simplification of the end markers, and a case analysis for dimension 2 carried out by a
-solver. The status of each part is stated in section 5.
+This note has four parts: a lemma about the carry rules that holds in every dimension, a
+simplification of the end markers, a theorem that excludes a family of interpretations in
+every dimension, and a case analysis for dimension 2 carried out by a solver. The status of
+each part is stated in section 6.
 
 ## 1. The carry rules can be undone around a circle
 
@@ -116,7 +117,111 @@ for `▷` as the strict ones. A solution of these conditions is an interpretatio
 is lost and nothing is gained: the conditions have a solution exactly when T has a
 two-dimensional natural interpretation that removes a rule.
 
-## 3. What the solver is asked
+In the right form, with m ≥ 0 for the vector of `◁` and r for the first row of the matrix of
+`▷`, the conditions used below are
+
+    2t → t2 (the carry rule t2 → 2t):   G·B ≥ B·G        g + G·b ≥ b + B·g
+    2◁ → tf◁:                                             g + G·m ≥ b + B·a + B·A·m
+    ▷f → ▷:                             r·A ≥ r           r·a ≥ 0
+    ▷t → ▷2:                            r·B ≥ r·G         r·b ≥ r·g
+
+and a strict rule means r·a > 0 or r·b > r·g.
+
+## 3. Interpretations that mix the two coordinates of both binary digits
+
+This section is proved in writing and holds in every dimension d. The vectors of f, t, 0, 1,
+2 are written a, b, e, f, g as above, and r, n, m are the row and the vectors of section 2.
+
+**Lemma III (left form).** If the vector g of the digit 2 is zero, no rule is strict.
+
+*Proof.* The carry rule f2 → 1f gives a + A·g ≥ f + F·a, so with g = 0, f ≤ a entry by
+entry. The rule ◁2 → ◁ft gives r·g ≥ r·a + r·A·b, so r·a = 0 and the rule is not strict.
+Then r·f ≤ r·a = 0, and ◁1 → ◁ff, which says r·f ≥ r·a + r·A·a, gives r·A·a = 0 and is not
+strict. The carry rule f1 → 0t gives a + A·f ≥ e + E·b ≥ e, so
+r·e ≤ r·a + r·A·f ≤ r·a + r·A·a = 0. So both sides of r·e ≥ r·b are zero and ◁0 → ◁t is not
+strict. ∎
+
+Three standard facts about a square matrix B with non-negative entries that is irreducible
+(for every i, k some power of B has a positive entry at (i, k)) are used:
+
+- its spectral radius β is an eigenvalue with a left eigenvector y and a right eigenvector x
+  whose entries are all positive;
+- every left eigenvector of B with non-negative entries is a multiple of y, and every such
+  right eigenvector a multiple of x;
+- if the entries of B are integers, β ≥ 1. (Some power B^k has a positive diagonal entry, so
+  the trace of B^(k·j) is at least 1 for every j, and it is at most d·β^(k·j).)
+
+*A matrix that commutes with B.* If G has non-negative entries and B·G = G·B, then
+y·G = γ·y and G·x = γ·x for one number γ ≥ 0. Indeed (y·G)·B = (y·B)·G = β·(y·G), so y·G is
+zero or a non-negative left eigenvector of B, hence a multiple γ·y. In the same way
+G·x = γ′·x, and y·G·x = γ·(y·x) = γ′·(y·x) with y·x > 0.
+
+**Theorem 5.** Let d ≥ 1. There is no natural matrix interpretation of dimension d that
+makes every rule of T weakly decreasing and a strict rule strictly decreasing
+
+- *(left form)* if the matrix of t or the matrix of 2 is irreducible, the matrix A of f is
+  entrywise at least the identity matrix, and no row of A − I is zero;
+- *(right form)* if the matrix B of t is irreducible with spectral radius greater than 1, the
+  matrix A of f is entrywise at least the identity matrix, and no column of A − I is zero.
+
+In particular there is none, in either form and for d ≥ 2, in which no entry of the matrices
+of f and t is zero. (For d = 2 the spectral radius of an irreducible integer matrix is 1
+only for the matrix that exchanges the two coordinates.)
+
+*Proof, left form.* An irreducible matrix among the digits makes the digit matrices
+irreducible in the sense of Corollary 1, so B·G = G·B. Let y, x be the positive eigenvectors
+of whichever of B, G is irreducible. By the remark on commuting matrices y·B = β·y,
+B·x = β·x, y·G = γ·y, G·x = γ·x with β, γ ≥ 0, and β ≥ 1 if B is the irreducible one, γ ≥ 1
+if G is.
+
+*γ > β and γ ≥ 1.* The row r is not zero, since otherwise no rule is strict. Because A ≥ I,
+r·A − r = r·(A − I) ≥ 0; and it is not zero, because some r_i is positive and row i of A − I
+is not zero. As x is positive, r·A·x > r·x > 0. The matrix part of ◁2 → ◁ft is
+r·G ≥ r·A·B; multiplied by x it reads γ·(r·x) ≥ β·(r·A·x). If β > 0 this gives
+γ·(r·x) > β·(r·x), so γ > β. If β = 0 then B is not irreducible, so G is, and γ ≥ 1 > β. In
+both cases γ ≥ 1.
+
+*g = 0.* For a vector v write λ(v) = y·v ≥ 0. Multiplying the vector parts of t2 → 2t and of
+t▷ → 2▷ by y gives
+
+    λ(b) + β·λ(g) ≥ λ(g) + γ·λ(b)        λ(b) + β·λ(n) ≥ λ(g) + γ·λ(n).
+
+The second gives λ(b) ≥ λ(g) + (γ − β)·λ(n) ≥ λ(g). The first is
+(β − 1)·λ(g) ≥ (γ − 1)·λ(b), and (γ − 1)·λ(b) ≥ (γ − 1)·λ(g) because γ ≥ 1. So
+(γ − β)·λ(g) ≤ 0, hence λ(g) = 0, and g = 0 because y is positive. By Lemma III no rule is
+strict. ∎
+
+*Proof, right form.* Again B·G = G·B; let y, x be the positive eigenvectors of B, with
+β > 1, y·G = γ·y and G·x = γ·x. The matrix part of ▷t → ▷2, multiplied by x, gives
+β·(r·x) ≥ γ·(r·x), so β ≥ γ. Multiplying the vector parts of 2t → t2 and 2◁ → tf◁ by y gives
+
+    (γ − 1)·λ(b) ≥ (β − 1)·λ(g)          λ(g) + γ·λ(m) ≥ λ(b) + β·λ(a) + β·(y·A·m).
+
+Because A ≥ I and no column of A − I is zero, every entry of y·A − y = y·(A − I) is
+positive; so y·A·m ≥ λ(m), with equality only for m = 0. Put
+
+    Δ = β·λ(a) + β·(y·A·m − λ(m)) + (β − γ)·λ(m),
+
+a sum of three non-negative terms. The second inequality says λ(g) ≥ λ(b) + Δ. Then
+
+    (γ − 1)·λ(b) ≥ (β − 1)·λ(g) ≥ (β − 1)·λ(b) + (β − 1)·Δ,
+
+so 0 ≥ (β − γ)·λ(b) + (β − 1)·Δ. Both terms are non-negative and β > 1, so Δ = 0 and
+(β − γ)·λ(b) = 0. From Δ = 0: λ(a) = 0, so a = 0 and ▷f → ▷ is not strict; and
+y·A·m = λ(m), so m = 0.
+
+- If β > γ, then λ(b) = 0, so b = 0, and r·b > r·g is impossible.
+- If β = γ, then λ(b) ≥ λ(g) from the first inequality and λ(g) ≥ λ(b) from the second, so
+  λ(g) = λ(b). With a = 0 and m = 0 the vector part of 2◁ → tf◁ is g ≥ b entry by entry.
+  Since y is positive and y·(g − b) = 0, g = b, and ▷t → ▷2 is not strict. ∎
+
+The theorem leaves open the interpretations in which the matrix of f has a zero on the
+diagonal or a row (in the right form, a column) in common with the identity matrix, and
+those in which the matrices of t and 2 are both reducible, for example triangular. In
+dimension 1 the corresponding border case, a multiplier equal to 1, also needed a separate
+argument.
+
+## 4. What the solver is asked
 
 The solver z3 cannot decide these conditions as they stand: they are polynomial inequalities
 in 34 unknown integers, and z3 gives up. The question is therefore split into cases.
@@ -154,12 +259,12 @@ smaller systems that do have a proof (T without `t▷ → 2▷` in the left form
 left-end rules in the right form) the same procedure finds an interpretation that the checker
 accepts.
 
-## 4. Results
+## 5. Results
 
 The case analysis with the final version of the script is running; this section will be
 filled in when it finishes.
 
-## 5. Status
+## 6. Status
 
 - Lemma I, its corollaries and Lemma II are written proofs.
 - The case analysis is not complete, so nothing is claimed yet about dimension 2.

@@ -30,10 +30,26 @@ z3 cannot answer this as one question, so it is split (docs/dimension2.md has th
 Verdict per pattern: "none" (every part refuted), "found" (z3 produced an integer solution
 and checker/check.py accepted the certificate built from it), "undecided".
 
+A second pass (--hand) takes the patterns that the first pass left undecided and uses two
+results that are proved in writing in docs/dimension2.md:
+
+  Lemma III   (left form) an interpretation in which the vector of the digit 2 is zero makes
+              no rule strict; so that vector is required to be non-zero.
+  Theorem 5   no interpretation exists when the matrix of t is irreducible and the matrix of
+              f is the identity plus a matrix without a zero row (left form; without a zero
+              column and with spectral radius of the matrix of t above 1 in the right form).
+              A pattern for which this always holds needs no solver.  A pattern for which it
+              holds unless certain entries are equal to 1 is given to z3 with those
+              equalities added.
+
+The first pass is recorded in {form}.jsonl and rests on z3 alone; the second pass is recorded
+in {form}-hand.jsonl.
+
 Usage:
   dimension2.py --selftest
   dimension2.py --form left|right [--jobs N] [--t1 S] [--t2 S] [--t3 S] [--t4 S] [--out DIR]
                 [--again]       # re-run the patterns recorded as undecided
+                [--hand]        # second pass, for the patterns undecided in the first
   dimension2.py --summary [--out DIR]
 """
 import argparse
@@ -130,6 +146,44 @@ def is_carry_system(rules):
     return False
 
 
+# ---------------------------------------------------------------------------------------
+# Results with a written proof (docs/dimension2.md, section 3)
+# ---------------------------------------------------------------------------------------
+
+def lemma3_applies(rules):
+    """Lemma III uses these five rules of the left form and no others."""
+    have = {(''.join(r.left), ''.join(r.right), bool(r.strict)) for r in rules}
+    return {('ag', 'fa', False), ('af', 'eb', False), ('ce', 'cb', True), ('cf', 'caa', True),
+            ('cg', 'cab', True)} <= have
+
+
+def theorem5(form, pattern):
+    """What Theorem 5 leaves of a zero pattern of the full system T.
+
+    None: the theorem does not apply to the pattern.  Otherwise a list of cases that the
+    theorem does not cover, each a list of conditions (symbol, i, j, value) meaning that
+    entry (i, j) of the matrix of the symbol equals the value; an empty list means that
+    the theorem excludes every interpretation with this pattern.
+    """
+    A, B, G = pattern[0], pattern[1], pattern[4]
+    irreducible = lambda m: bit(m, 0, 1) and bit(m, 1, 0)
+    if not (bit(A, 0, 0) and bit(A, 1, 1)):
+        return None                              # the matrix of f is not >= the identity
+    if form == 'left':
+        if not (irreducible(B) or irreducible(G)):
+            return None
+        # a row of A - I is zero: the diagonal entry is 1 and the other entry is 0
+        return ([[('a', 0, 0, 1)]] if not bit(A, 0, 1) else []) + \
+               ([[('a', 1, 1, 1)]] if not bit(A, 1, 0) else [])
+    if not irreducible(B):
+        return None
+    cases = ([[('a', 0, 0, 1)]] if not bit(A, 1, 0) else []) + \
+            ([[('a', 1, 1, 1)]] if not bit(A, 0, 1) else [])
+    if not (bit(B, 0, 0) or bit(B, 1, 1)):
+        cases.append([('b', 0, 1, 1), ('b', 1, 0, 1)])     # spectral radius 1
+    return cases
+
+
 def cancel(equations, positive):
     """Consequences of polynomial equations in variables that are all positive.
 
@@ -169,7 +223,7 @@ def cancel(equations, positive):
 class Encoding:
     """The unknowns and constraints for one problem, one zero pattern and one number type."""
 
-    def __init__(self, rules, pattern, real=False):
+    def __init__(self, rules, pattern, real=False, hand=False):
         self.rules, self.pattern, self.real = rules, pattern, real
         V = z3.Real if real else z3.Int
         self.top = next(r.left[0] for r in rules if r.strict)   # end marker at the top position
@@ -238,6 +292,8 @@ class Encoding:
                         product = product * term(base)
                 total = total + product
             cons.append(total == 0)
+        if hand and lemma3_applies(rules):
+            cons.append(z3.Or([x > 0 for x in self.v['g']]))
         self.constraints = cons
 
     def symbolic(self, string):
@@ -301,11 +357,29 @@ def solve(constraints, real, timeout):
     return str(answer), (solver.model() if answer == z3.sat else None)
 
 
-def decide(problem_text, pattern, t1, t2, t3, t4=0):
-    """Verdict for one zero pattern: ('none' | 'found' | 'undecided', detail)."""
+def decide(problem_text, pattern, t1, t2, t3, t4=0, hand=None):
+    """Verdict for one zero pattern: ('none' | 'found' | 'undecided', detail).
+
+    With hand = 'left' or 'right' (the form of the full system T that problem_text is), the
+    written results of docs/dimension2.md are used as described at the top of this file.
+    """
     rules, is_top = parse_problem(problem_text)
     assert is_top
-    enc = Encoding(rules, pattern)
+    cases, rest = [[]], None
+    if hand:
+        rest = theorem5(hand, pattern)
+        if rest == []:
+            return 'none', {'how': 'theorem 5'}
+        cases = rest or cases
+    enc = Encoding(rules, pattern, hand=bool(hand))
+    reals = []
+
+    def real():
+        if not reals:
+            reals.append(Encoding(rules, pattern, real=True, hand=bool(hand)))
+        return reals[0]
+
+    conditions = lambda e, case: [e.M[s][i][j] == value for s, i, j, value in case]
 
     def found(model):
         cert = enc.certificate(model)
@@ -315,43 +389,58 @@ def decide(problem_text, pattern, t1, t2, t3, t4=0):
             return 'undecided', {'error': f'z3 model rejected by the checker: {e}'}
         return 'found', {'certificate': cert}
 
-    answer, model = solve(enc.whole(), False, t1)
-    if answer == 'unsat':
-        return 'none', {'how': 'whole'}
-    if answer == 'sat':
-        return found(model)
-    real = Encoding(rules, pattern, real=True)
-
     def both(rp, name, extra, limit_int, limit_real):
         """One part with extra conditions on matrix entries: integers, then real numbers."""
         answer, model = solve(enc.part(rp, name) + [f(enc) for f in extra], False, limit_int)
         if answer != 'unknown':
             return answer, model, 'int'
-        answer, _ = solve(real.part(rp, name) + [f(real) for f in extra], True, limit_real)
+        answer, _ = solve(real().part(rp, name) + [f(real()) for f in extra], True, limit_real)
         # a real solution says nothing about the integers
         return ('unsat' if answer == 'unsat' else 'undecided'), None, 'real'
 
-    parts = []
-    for rp, name in enc.parts():
-        answer, model, how = both(rp, name, [], t2, t3)
+    def one(case):
+        """('none' | 'undecided', detail), or ('sat', model)."""
+        fixed = [lambda e: z3.And(conditions(e, case))] if case else []
+        answer, model = solve(enc.whole() + [f(enc) for f in fixed], False, t1)
+        if answer == 'unsat':
+            return 'none', {'how': 'whole'}
         if answer == 'sat':
-            return found(model)
-        if answer != 'unsat' and t4:
-            # Split on one positive matrix entry x: either x = 1 or x >= 2.
-            for s, m in zip(DIGITS, pattern):
-                for i, j in BITS:
-                    if not bit(m, i, j) or answer == 'unsat':
-                        continue
-                    halves = [both(rp, name, [extra], t4, t4) for extra in
-                              (lambda e: e.M[s][i][j] == 1, lambda e: e.M[s][i][j] >= 2)]
-                    for half in halves:
-                        if half[0] == 'sat':
-                            return found(half[1])
-                    if all(half[0] == 'unsat' for half in halves):
-                        answer, how = 'unsat', f'split on M{s}{i}{j}'
-        parts.append([rp, name, answer, how])
-    verdict = 'none' if all(x[2] == 'unsat' for x in parts) else 'undecided'
-    return verdict, {'how': 'parts', 'parts': parts}
+            return 'sat', model
+        parts = []
+        for rp, name in enc.parts():
+            answer, model, how = both(rp, name, fixed, t2, t3)
+            if answer == 'sat':
+                return 'sat', model
+            if answer != 'unsat' and t4:
+                # Split on one positive matrix entry x: either x = 1 or x >= 2.
+                for s, m in zip(DIGITS, pattern):
+                    for i, j in BITS:
+                        if not bit(m, i, j) or answer == 'unsat':
+                            continue
+                        halves = [both(rp, name, fixed + [extra], t4, t4) for extra in
+                                  (lambda e: e.M[s][i][j] == 1, lambda e: e.M[s][i][j] >= 2)]
+                        for half in halves:
+                            if half[0] == 'sat':
+                                return 'sat', half[1]
+                        if all(half[0] == 'unsat' for half in halves):
+                            answer, how = 'unsat', f'split on M{s}{i}{j}'
+            parts.append([rp, name, answer, how])
+        verdict = 'none' if all(x[2] == 'unsat' for x in parts) else 'undecided'
+        return verdict, {'how': 'parts', 'parts': parts}
+
+    results = []
+    for case in cases:
+        verdict, detail = one(case)
+        if verdict == 'sat':
+            return found(detail)
+        results.append((verdict, dict(detail, case=[list(c) for c in case])))
+    verdict = 'none' if all(v == 'none' for v, _ in results) else 'undecided'
+    if not hand:
+        detail = results[0][1]
+        del detail['case']
+        return verdict, detail
+    return verdict, {'how': 'cases', 'theorem5': rest is not None,
+                     'cases': [d for _, d in results]}
 
 
 # ---------------------------------------------------------------------------------------
@@ -417,15 +506,47 @@ def selftest():
                 break
         report(f'control with a known proof, {form} form ({title})', hit is not None,
                f'pattern {hit[0]}, removes {hit[1]}' if hit else 'nothing found')
+        if form == 'left' and hit:
+            # Lemma III holds for this control as well, so requiring a non-zero vector for
+            # the digit 2 must not remove its interpretations.
+            assert lemma3_applies(rules)
+            answer, _ = solve(Encoding(rules, hit[0], hand=True).whole(), False, 60)
+            report('the control still has an interpretation under Lemma III', answer == 'sat',
+                   answer)
+
+    # 3. Theorem 5 on concrete matrices.  For digit matrices that satisfy its hypotheses and
+    #    for which the weak conditions can be met, z3 (which decides these small problems)
+    #    must find the weak conditions satisfiable and no strict rule possible.
+    I, M, P = [[1, 0], [0, 1]], [[2, 1], [1, 1]], [[5, 3], [3, 2]]            # P = M*M
+    instances = [
+        ('left', 'f, t = M; 0, 1, 2 = M*M', dict(a=M, b=M, e=P, f=P, g=P)),
+        ('left', 'a conjugate of the value representation',
+         dict(a=[[5, 1], [3, 7]], b=[[7, 3], [1, 5]], e=[[24, 8], [24, 40]],
+              f=[[32, 16], [16, 32]], g=[[40, 24], [8, 24]])),
+        ('right', 'all five digits = M', dict(a=M, b=M, e=M, f=M, g=M)),
+        ('right', 'f, t = M*M; 0, 1, 2 = M', dict(a=P, b=P, e=M, f=M, g=M)),
+        ('right', 'f, t = M; 0, 1, 2 = identity', dict(a=M, b=M, e=I, f=I, g=I))]
+    for form, title, mats in instances:
+        rules, _ = parse_problem(systems.COLLATZ.search_problem(form))
+        p = tuple(sum(1 << k for k, (i, j) in enumerate(BITS) if mats[s][i][j]) for s in DIGITS)
+        covered = theorem5(form, min(p, tuple(pattern_swap(m) for m in p))) == []
+        enc = Encoding(rules, p, real=True)
+        fix = [enc.M[s][i][j] == mats[s][i][j] for s in DIGITS for i, j in BITS]
+        weak, _ = solve(enc.constraints + fix + [enc.row[0] + enc.row[1] >= 1], True, 60)
+        strict, _ = solve(enc.whole() + fix, True, 60)
+        report(f'Theorem 5 on an instance, {form} form ({title})',
+               covered and weak == 'sat' and strict == 'unsat',
+               f'covered: {covered}, weak conditions: {weak}, with a strict rule: {strict}')
     return ok
 
 
 # ---------------------------------------------------------------------------------------
 
 def work(job):
-    form, p, t1, t2, t3, t4 = job
+    form, p, t1, t2, t3, t4, hand = job
     start = time.time()
-    verdict, detail = decide(systems.COLLATZ.search_problem(form), tuple(p), t1, t2, t3, t4)
+    verdict, detail = decide(systems.COLLATZ.search_problem(form), tuple(p), t1, t2, t3, t4,
+                             form if hand else None)
     return {'form': form, 'pattern': list(p), 'class': pattern_class(p), 'verdict': verdict,
             'seconds': round(time.time() - start, 1), 'detail': detail}
 
@@ -446,12 +567,18 @@ def run(args):
     rules, _ = parse_problem(systems.COLLATZ.search_problem(args.form))
     todo = patterns(rules)
     done = load(path)
+    if args.hand:
+        # second pass: the patterns that the first pass left undecided
+        todo = [p for p in todo if p in done and done[p]['verdict'] == 'undecided']
+        path = os.path.join(args.out, f'{args.form}-hand.jsonl')
+        done = load(path)
     if args.again:
         todo = [p for p in todo if p in done and done[p]['verdict'] == 'undecided']
     else:
         todo = [p for p in todo if p not in done]
-    print(f'{args.form} form: {len(done)} patterns recorded, {len(todo)} to do', flush=True)
-    jobs = [(args.form, p, args.t1, args.t2, args.t3, args.t4) for p in todo]
+    print(f'{args.form} form{", second pass" if args.hand else ""}: {len(done)} patterns '
+          f'recorded, {len(todo)} to do', flush=True)
+    jobs = [(args.form, p, args.t1, args.t2, args.t3, args.t4, args.hand) for p in todo]
     with multiprocessing.Pool(args.jobs) as pool, open(path, 'a') as f:
         for r in pool.imap_unordered(work, jobs):
             f.write(json.dumps(r) + '\n')
@@ -536,6 +663,9 @@ def main():
                          '(0: no splitting)')
     ap.add_argument('--again', action='store_true',
                     help='re-run the patterns recorded as undecided (with other time limits)')
+    ap.add_argument('--hand', action='store_true',
+                    help='second pass over the patterns undecided in the first, using '
+                         'Lemma III and Theorem 5 of docs/dimension2.md')
     ap.add_argument('--out', default=os.path.join(ROOT, 'results', 'dimension2'))
     args = ap.parse_args()
     if args.selftest:
