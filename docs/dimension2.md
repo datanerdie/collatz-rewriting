@@ -363,14 +363,17 @@ on x and y.
 - (S2) det A > 0; y is a left eigenvector of all five matrices with eigenvalues
   α, α, ε, ε, ε, and ε > 0; the eigenvalues of A and those of B are α and α/2, and the
   eigenvalues of each of E, F, G are ε and ε/3.
-- (S3) det A = 0; F·x = ε·x with ε > 0; and there is a positive row ỹ with ỹ·B = α·ỹ and
-  ỹ·G = ε·ỹ.
+- (S3) det A = 0; ε > 0; F·x = ε·x, y·G = ε·y and y·B = (α/ε)·(y·F); and there is a
+  positive row ỹ with ỹ·B = α·ỹ and ỹ·G = ε·ỹ, namely ỹ = y if y·F = ε·y, and otherwise
+  ỹ = y·F, in which case the diagonal of F is zero and F·F = ε²·I.
 
-The value representation at the top of this note is of the kind (S2), up to the choice of
-coordinates and the order of the products. In the proof, (S2) arises from the relations
-τ·A = A·τ·τ and τ·E = E·τ·τ·τ for τ = B·A⁻¹. In the value representation τ adds 1 to the
-number, and the relations say 2·(n + 1) = 2·n + 2 and 3·(n + 1) = 3·n + 3. So when all the
-matrices are invertible, the six carry equalities force either t = f, or this arithmetic.
+In the proof, (S2) arises from the relations τ·A = A·τ·τ and τ·E = E·τ·τ·τ for
+τ = B·A⁻¹. The value representation at the top of this note satisfies them, up to the
+order of the products: there τ adds 1 to the number, and the relations say
+2·(n + 1) = 2·n + 2 and 3·(n + 1) = 3·n + 3. Its matrix of f is diagonal, so it is not
+covered by the theorem itself but by Corollary 10 below, which says: when the matrices of
+f, t and 0 are invertible, the six carry equalities force either t = f, or this arithmetic.
+The smallest example of (S2) has A = [[3, 1], [1, 3]] and B = [[4, 2], [0, 2]].
 
 *Proof.* If F = 0, then A·G = 0 by (3), so α·(y·G) = 0 and G = 0: this is (S0). Assume
 F ≠ 0. By (1), E = ε·Π + ε′·(I − Π).
@@ -459,23 +462,34 @@ small examples, not part of the proofs.
 One part of the proof does not need a matrix of f that mixes the coordinates.
 
 **Corollary 10 (dimension 2, both forms).** Let A, B, E, F, G be real 2×2 matrices that
-satisfy (1) to (6), or the same six equalities with every product reversed, and let A, B
-and E be invertible. Then either B = A and E = F = G, or there are real numbers μ ≠ 0 and
-ν ≠ 0 such that A and B have the eigenvalues μ and 2·μ, and E, F and G the eigenvalues ν
-and 3·ν. In the second case B has the trace and the determinant of A, with
-2·(trace A)² = 9·det A, and F and G have the trace and the determinant of E, with
-3·(trace E)² = 16·det E.
+satisfy (1) to (6), and let A, B and E be invertible.
+
+- If B = A, then E = F = G.
+- If B ≠ A, there are a column c, a row d with d·c = 0, and real numbers μ ≠ 0, ν ≠ 0 such
+  that B = A + 2·μ·c·d; c is a right eigenvector of A and B with eigenvalue μ and of E, F,
+  G with eigenvalue ν; and d is a left eigenvector of A and B with eigenvalue 2·μ and of
+  E, F, G with eigenvalue 3·ν. In particular B has the trace and the determinant of A,
+  with 2·(trace A)² = 9·det A, and F and G have the trace and the determinant of E, with
+  3·(trace E)² = 16·det E.
+
+If instead the six equalities hold with every product reversed, the same is true with
+rows and columns exchanged (c a row, d a column, "left" and "right" exchanged); the
+statements about traces and determinants are unchanged.
 
 By Corollary 1 this applies to every interpretation in which the digit matrices are
-irreducible (for instance one of them triangular upward and another downward) and those of
-f, t and 0 are invertible.
+irreducible (for instance one of them triangular upward and another downward, each with a
+positive entry off the diagonal) and those of f, t and 0 are invertible.
 
-*Proof.* In the proof of Theorem 7, the part "(b), B is invertible" uses of A only that it
-is invertible, as far as the statement that A·c = μ·c and d·A = 2·μ·d with a real μ ≠ 0, or
-else N = 0, B = A and E = F = G. In the first alternative B = A + 2·μ·c·d, so B·c = μ·c and
-d·B = 2·μ·d. In the same way N·E = 3·E·N gives E·c = ν·c and d·E = 3·ν·d with a real
-ν ≠ 0, and then F = A⁻¹·E·B and G = A⁻¹·F·A satisfy F·c = ν·c, d·F = 3·ν·d, G·c = ν·c and
-d·G = 3·ν·d. For the reversed equalities, apply this to the transposed matrices. ∎
+*Proof.* If B = A, then (2) and (1) give A·F = E·A = A·E, so F = E, and (3) gives
+A·G = F·A = A·E, so G = E. Let B ≠ A. In the proof of Theorem 7, the part "(b), B is
+invertible" uses of A only that it is invertible, as far as the statement that N = τ − I
+satisfies N·N = 0, N·A = 2·A·N and τ·τ·τ = E⁻¹·τ·E. Here N ≠ 0 because B ≠ A, and as
+there N = c·d with d·c = 0, A·c = μ·c and d·A = 2·μ·d with a real μ ≠ 0. Then
+B = τ·A = A + 2·μ·c·d, so B·c = μ·c and d·B = 2·μ·d. In the same way N·E = 3·E·N gives
+E·c = ν·c and d·E = 3·ν·d with a real ν ≠ 0, and then F = A⁻¹·E·B and G = A⁻¹·F·A satisfy
+F·c = ν·c, d·F = 3·ν·d, G·c = ν·c and d·G = 3·ν·d. The eigenvalues of A and B are thus μ
+and 2·μ, with sum 3·μ and product 2·μ², and those of E, F, G are ν and 3·ν, with sum 4·ν
+and product 3·ν². For the reversed equalities, apply this to the transposed matrices. ∎
 
 **Theorem 8 (dimension 2).** In neither form is there a two-dimensional natural matrix
 interpretation that makes every rule of T weakly decreasing and a strict rule strictly
@@ -493,8 +507,8 @@ The proof for the left form uses two steps. The first is taken from the proof of
 - (V) *In the left form, if the digit matrices are irreducible, A, B and E are invertible
   and B ≠ A, no rule is strict.*
 
-*Proof of (V).* By Corollary 1 the equalities (1) to (6) hold. By Corollary 10 and its
-proof there are a column c, a row d with d·c = 0, and real numbers μ ≠ 0, ν ≠ 0 such that
+*Proof of (V).* By Corollary 1 the equalities (1) to (6) hold. By Corollary 10 there are a
+column c, a row d with d·c = 0, and real numbers μ ≠ 0, ν ≠ 0 such that
 A·c = μ·c, B = A + 2·μ·c·d, and d is a left eigenvector of A and B with eigenvalue 2·μ and
 of E, F and G with eigenvalue 3·ν.
 
@@ -506,7 +520,8 @@ a simple eigenvalue of A, d is a multiple of such a row, and after rescaling c i
 are non-negative. If one of them were zero, the five equations d·M = (eigenvalue)·d would
 give every digit matrix a zero at the same place off the diagonal, and the digit matrices
 would not be irreducible. So d is positive. Write y for it and ε = 3·ν; then y·B = α·y and
-y·G = ε·y, and ε > 0.
+y·G = ε·y. Moreover ε > 0, because y·E = ε·y, y is positive, and E has non-negative
+entries and is not zero.
 
 Let x₀ be an eigenvector of A for α with non-negative entries, c′ = (y·x₀)·c, and
 x_t = x₀ + t·c′ for a number t. Then y·x_t = y·x₀ > 0,
@@ -542,7 +557,9 @@ so it is I or J. The rule ◁1 → ◁ff requires r·F ≥ r·A·A = r. If F = J
 two entries of r are equal. If F = I, then (3) gives G = I, (5) gives B = J, (2) gives
 E = I, and ◁0 → ◁t requires r = r·E ≥ r·B = r·J, so again the entries of r are equal. In
 both cases r is a multiple of y and all five matrices fix y, which (P) in the proof of
-Theorem 6 excludes.
+Theorem 6 excludes. (The argument for (P) uses of y only that it is a positive row; here
+y = (1, 1), so the one-dimensional interpretation it produces has integer coefficients, as
+Theorem 4 requires.)
 
 *(S3).* Here α ≥ 2 and ε ≥ α² > α, and (L) applies with the row ỹ, β = α, γ = ε.
 
@@ -583,7 +600,7 @@ columns. Write λ(v) = y·v when a positive row y is given. Three steps are used
 - (V′) *In the right form, if the digit matrices are irreducible, A, B and E are invertible
   and B ≠ A, no rule is strict.*
 
-*Proof of (V′).* Corollary 10 and its proof, applied to the transposed matrices, give a
+*Proof of (V′).* Corollary 10, in its form for reversed products, gives a
 column x, a row w with w·x = 0, and real numbers μ ≠ 0, ν ≠ 0 such that w·A = μ·w,
 B = A + 2·μ·x·w, x is a right eigenvector of A and B with eigenvalue 2·μ and of E, F, G
 with eigenvalue 3·ν, and w is a left eigenvector of A and B with eigenvalue μ and of E, F,
@@ -633,16 +650,15 @@ and y be the positive column and row of A.
 
 *(S1)* reads the same for the matrices themselves: x and y are eigenvectors of all five,
 with eigenvalues α, α, ε, ε, ε. If α > 1, (C) applies with x̂ = x. If α = 1, then A = J, x
-and y are (1, 1), α ≥ ε as in (C), and ε, a row sum of E, is 0 or 1. If ε = 0, then
-E = F = G = 0 and (Z) applies. If ε = 1, every digit matrix is I or J; ▷f → ▷ requires
-r·J ≥ r, so r is a multiple of y, and (P) gives a contradiction.
+and y are (1, 1), α ≥ ε as in (C), and ε, a positive row sum of E, is 1. So every digit
+matrix is I or J; ▷f → ▷ requires r·J ≥ r, so r is a multiple of y, and (P) gives a
+contradiction.
 
 *(S2).* A, B and E are invertible. If B ≠ A, (V′) applies. If B = A, then E = F = G by
 Corollary 10, and this is the situation of (S1).
 
 *(S3).* Then det A = 0, α ≥ 2, and with x scaled so that y·x = 1, A·v = α·λ(v)·x for every
-column v. Transposing the statement of (S3) and the four equalities displayed in its proof
-gives ε > 0 and
+column v. Transposing the statement of (S3) gives ε > 0 and
 
     y·F = ε·y    G·x = ε·x    B·x = (α/ε)·F·x    E·x = ε·x    y·E = ε·y,
 
@@ -662,7 +678,7 @@ G = (ε/α)·B. Altogether, with Λ(v) = z·v,
 
     A·v = α·λ(v)·x    E·v = ε·λ(v)·x    F·v = ε·v    B·v = Λ(v)·x    G·v = (ε/α)·Λ(v)·x
 
-and Λ(x) = α. Moreover z ≤ α²·y entry by entry: the diagonal entry α·x_i·y_i of A is a
+and Λ(x) = α. The entries of z = y·B are non-negative. Moreover z ≤ α²·y entry by entry: the diagonal entry α·x_i·y_i of A is a
 positive integer, so 1/x_i ≤ α·y_i, and z_i·x_i ≤ z·x = α. So Λ(v) ≤ α²·λ(v) for every
 non-negative column v.
 
@@ -697,7 +713,8 @@ is (α⁴ + α² − α)·λ(a) ≤ 0, and a = 0.
 *Second case, F·x ≠ ε·x.* Then F·F = ε²·I, and x̂ = F·x is not a multiple of x (a multiple
 κ·x would have κ = ε, because y·F = ε·y). Multiplying
 (5′) by F on the left gives ε²·B = α·x̂·(y·G), so B = (α/ε²)·x̂·(y·G). Then (4′) reads
-(E·x̂)·(y·G) = x̂·(y·G·F), so E·x̂ is a multiple of x̂. But
+(E·x̂)·(y·G) = x̂·(y·G·F). Here y·G ≠ 0, because B ≠ 0, and then y·G·F ≠ 0, because F is
+invertible; so E·x̂ is a multiple of x̂. But
 E·x̂ = ε′·x̂ + (ε − ε′)·(y·x̂)·x, so ε′ = ε and E = ε·I. Now (2′) reads
 α·x̂·y = (α/ε)·x̂·(y·G), so y·G = ε·y and B = (α/ε)·x̂·y; and y·B = (α/ε)·(y·F·x)·y = α·y.
 So y is a left eigenvector of all five matrices with eigenvalues α, α, ε, ε, ε, and (C)
