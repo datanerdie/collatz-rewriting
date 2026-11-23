@@ -10,13 +10,13 @@ the number obtained by appending those digits. Every carry rule is then an equal
 dimension 2 the question is no longer whether the carries can be respected, but whether any
 such representation can be combined with the end rules.
 
-This note has five parts: a lemma about the carry rules that holds in every dimension, a
+This note has six parts: a lemma about the carry rules that holds in every dimension, a
 simplification of the end markers, two theorems that exclude the interpretations in which
 the digit t or the digit 2 mixes the coordinates (one in every dimension, a stronger one in
 dimension 2), a description of the digit matrices when the digit f mixes the coordinates,
-with a theorem that excludes those interpretations, and a case analysis for the rest of
-dimension 2 carried out by a solver. The
-status of each part is stated in section 7.
+with a theorem that excludes those interpretations, a theorem about triangular digit
+matrices, and a case analysis for the rest of dimension 2 carried out by a solver. The
+status of each part is stated in section 8.
 
 ## 1. The carry rules can be undone around a circle
 
@@ -750,7 +750,271 @@ the first entries of the vectors satisfy every condition by themselves, and with
 entry of r as the multiplier of the top marker they form a one-dimensional interpretation
 with a strict rule, again against Theorem 4. ∎
 
-## 5. What the solver is asked
+## 5. Triangular digit matrices with a large multiplier
+
+In this section every digit matrix is upper triangular. For a digit x write
+
+    M_x = [[p_x, u_x], [0, q_x]]        vector of x = (v_x, w_x)
+
+so that x maps a column X = (X₁, X₂) to (p_x·X₁ + u_x·X₂ + v_x, q_x·X₂ + w_x). The second
+coordinate is a one-dimensional interpretation by itself, with multipliers q and constants w.
+The first coordinate is a one-dimensional interpretation with multipliers p and constants v,
+disturbed by the terms u_x·X₂. By Lemma I the two sides of a carry rule have the same
+diagonal; for the four carry rules f1 → 0t, f2 → 1f, t0 → 1t, t1 → 2f this says
+
+    (D)   p_f·p_1 = p_0·p_t     p_f·p_2 = p_1·p_f     p_t·p_0 = p_1·p_t     p_t·p_1 = p_2·p_f
+
+and the same four equalities hold for q.
+
+**Theorem 9 (dimension 2).** There is no two-dimensional natural matrix interpretation that
+makes every rule of T weakly decreasing and a strict rule strictly decreasing, in which
+every digit matrix is upper triangular and
+
+- *(left form)* p_f ≥ 2;
+- *(right form)* p_f = p_t ≥ 2.
+
+The same holds with the two coordinates exchanged, that is, for lower triangular digit
+matrices and the entries at the bottom right.
+
+In the right form p_f = p_t holds as soon as p_t and one of p_0, p_1, p_2 are positive:
+p_f ≥ 1 because r·A ≥ r and r₁ > 0, so (D) gives p_2 = p_1, then p_0 = p_1, and then
+p_f·p_1 = p_1·p_t.
+
+In both proofs r₁ > 0 by Lemma IV. Dividing r by r₁ does not change which rules are weakly
+or strictly decreasing, so r = (1, ρ) with a rational number ρ ≥ 0, and V(X) = X₁ + ρ·X₂
+denotes the product r·X.
+
+### Left form
+
+*The multipliers.* The first entries of the matrix parts of the three rules for `◁` are
+p_0 ≥ p_t, p_1 ≥ p_f², p_2 ≥ p_f·p_t. Since p_f ≥ 2, p_1 ≥ 4. By (D), p_2 = p_1; then
+p_t·p_1 = p_2·p_f gives p_t = p_f, and p_t·p_0 = p_1·p_t gives p_0 = p_1. Write
+
+    σ = p_f = p_t ≥ 2        τ = p_0 = p_1 = p_2 ≥ σ² > σ.
+
+*The conditions in coordinates.* For a carry rule xy → zw (x, w binary digits, y, z ternary
+digits) the entry above the diagonal and the two entries of the vector give
+
+    (U)   σ·u_y + u_x·q_y ≥ τ·u_w + u_z·q_w
+    (H)   v_x + σ·v_y + u_x·w_y ≥ v_z + τ·v_w + u_z·w_w
+    (K)   w_x + q_x·w_y ≥ w_z + q_z·w_w.
+
+Below, "(H) for f2 → 1f" means (H) with x = f, y = 2, z = 1, w = f. The rules for `◁` give,
+besides the inequalities for p,
+
+    ◁0 → ◁t:    u_0 + ρ·q_0 ≥ u_t + ρ·q_t                      v_0 + ρ·w_0 ≥ v_t + ρ·w_t
+    ◁1 → ◁ff:   u_1 + ρ·q_1 ≥ (σ + q_f)·u_f + ρ·q_f²           v_1 + ρ·w_1 ≥ (1 + σ)·v_f + u_f·w_f + ρ·(1 + q_f)·w_f
+    ◁2 → ◁ft:   u_2 + ρ·q_2 ≥ σ·u_t + u_f·q_t + ρ·q_f·q_t      v_2 + ρ·w_2 ≥ v_f + σ·v_t + u_f·w_t + ρ·(w_f + q_f·w_t)
+
+and a rule is strict when the second inequality in its line is strict. We show that none is.
+
+*The first step.* Let T = b + B·n and S = g + G·n be the vectors of `t▷` and `2▷`:
+
+    T₁ = v_t + σ·n₁ + u_t·n₂    T₂ = w_t + q_t·n₂    S₁ = v_2 + τ·n₁ + u_2·n₂    S₂ = w_2 + q_2·n₂.
+
+The rule t▷ → 2▷ says T ≥ S entry by entry. The rule ◁2 → ◁ft says r·G ≥ r·A·B and
+r·g ≥ r·(a + A·b); applied to n it gives V(S) ≥ V(a + A·T), with equality only if the rule
+is not strict. Written out:
+
+    (★)   S₁ + ρ·S₂ ≥ σ·T₁ + u_f·T₂ + v_f + ρ·q_f·T₂ + ρ·w_f.
+
+**Case 1: ρ = 0 or q_f ≥ 1.** Then ρ·q_f·T₂ ≥ ρ·S₂, and σ·T₁ ≥ σ·S₁. So (★) gives
+(σ − 1)·S₁ ≤ 0, hence S₁ = 0, and then every term on the right of (★) other than ρ·q_f·T₂ is
+zero and ρ·q_f·T₂ = ρ·S₂:
+
+    T₁ = S₁ = 0      u_f·T₂ = 0      v_f = 0      ρ·w_f = 0      ρ·q_f·T₂ = ρ·S₂.
+
+(★) is an equality, so ◁2 → ◁ft is not strict. From T₁ = S₁ = 0:
+
+    v_t = v_2 = 0      n₁ = 0      u_t·n₂ = u_2·n₂ = 0.
+
+*Case 1a: ρ = 0.* The rule ◁1 → ◁ff is strict only if v_1 > u_f·w_f. (H) for f2 → 1f reads
+u_f·w_2 ≥ v_1 + u_1·w_f. If u_f = 0, then v_1 = 0. If u_f > 0, then T₂ = 0, so S₂ = 0 and
+w_2 = 0; hence v_1 = 0 and u_1·w_f = 0, and since u_1 ≥ (σ + q_f)·u_f > 0, w_f = 0. In both
+cases v_1 = 0 = u_f·w_f and the rule is not strict. The rule ◁0 → ◁t is strict only if
+v_0 > v_t = 0. (H) for f1 → 0t reads σ·v_1 + u_f·w_1 ≥ v_0 + u_0·w_t, and v_1 = 0, so
+u_f·w_1 ≥ v_0. If u_f = 0, then v_0 = 0. If u_f > 0, then w_f = w_2 = 0 as just shown, (K)
+for f2 → 1f reads w_f + q_f·w_2 ≥ w_1 + q_1·w_f and gives w_1 = 0, and so v_0 = 0.
+
+*Case 1b: ρ > 0 and q_f ≥ 1.* Then w_f = 0, so the vector a of f is zero; and
+q_f·T₂ = S₂ ≤ T₂, so (q_f − 1)·T₂ = 0 and T₂ = S₂. If w_2 = 0, the vector g of 2 is zero
+and no rule is strict by Lemma III. Suppose w_2 > 0. Then T₂ ≥ S₂ ≥ w_2 > 0, so u_f = 0 and
+q_f = 1. (H) for f2 → 1f reads u_f·w_2 ≥ v_1 + u_1·w_f, so v_1 = 0. By (D) for q, q_2 = q_1.
+Three cases remain, and each is contradictory.
+
+- q_t = 0. Then q_1 = q_f·q_1 = q_0·q_t = 0 and q_2 = 0, so T₂ = w_t and S₂ = w_2:
+  w_t = w_2 > 0. (H) for f1 → 0t reads 0 ≥ v_0 + u_0·w_t, so v_0 = 0 and u_0 = 0. (H) for
+  t2 → 2t reads u_t·w_2 ≥ u_2·w_t, so u_t ≥ u_2; the matrix part of ◁2 → ◁ft reads
+  u_2 ≥ σ·u_t; so u_t = u_2 = 0. The matrix part of ◁1 → ◁ff reads u_1 ≥ ρ > 0. But (H) for
+  t0 → 1t reads v_t + σ·v_0 + u_t·w_0 ≥ v_1 + τ·v_t + u_1·w_t, that is, 0 ≥ u_1·w_t > 0.
+- q_t ≥ 1 and q_1 = 0. Then q_0 = 0 (from q_t·q_0 = q_1·q_t) and q_2 = 0, so S₂ = w_2 and
+  T₂ = w_t + q_t·n₂ = w_2. (H) for f1 → 0t reads 0 ≥ v_0 + u_0·w_t, and the matrix part of
+  ◁0 → ◁t reads u_0 ≥ u_t + ρ·q_t > 0; so w_t = 0. Then q_t·n₂ = w_2 > 0, so n₂ > 0 and
+  u_t = u_2 = 0. But the matrix part of ◁2 → ◁ft reads u_2 + ρ·q_2 ≥ σ·u_t + u_f·q_t +
+  ρ·q_f·q_t, that is, 0 ≥ ρ·q_t > 0.
+- q_t ≥ 1 and q_1 ≥ 1. By (D), q_0 = q_1 = q_2; call it τ′ ≥ 1; and q_f·q_1 = q_0·q_t gives
+  q_t = q_f = 1. (K) for f1 → 0t reads w_1 ≥ w_0 + τ′·w_t and (K) for t0 → 1t reads
+  w_t + w_0 ≥ w_1 + τ′·w_t. Adding them, w_t ≥ 2·τ′·w_t, so w_t = 0. Then T₂ = S₂ reads
+  n₂ = w_2 + τ′·n₂ ≥ w_2 + n₂ > n₂.
+
+**Case 2: ρ > 0 and q_f = 0.** By (D) for q, q_0·q_t = 0, q_2·0 = q_t·q_1 and
+q_t·q_0 = q_1·q_t; so if q_t ≥ 1 then q_0 = q_1 = 0.
+
+*Blocks.* For j ≥ 1 the string t^j▷ can be rewritten to 2^j▷ with the rules t▷ → 2▷ and
+t2 → 2t. All rules are weakly decreasing and the maps of the digits are monotone, so the
+vector of t^j▷ is entry by entry at least the vector of 2^j▷. Write (h_j, k_j) for the
+first and (h′_j, k′_j) for the second (j ≥ 0; for j = 0 both are n). Then
+
+    k_j = q_t^j·n₂ + w_t·(1 + q_t + … + q_t^(j−1))        h_j = σ^j·n₁ + Σ_{i<j} σ^i·(v_t + u_t·k_{j−1−i})
+    k′_j = q_2^j·n₂ + w_2·(1 + q_2 + … + q_2^(j−1))       h′_j = τ^j·n₁ + Σ_{i<j} τ^i·(v_2 + u_2·k′_{j−1−i})
+
+and h_j ≥ h′_j, k_j ≥ k′_j. With Λ = max(σ, q_t): k_j ≤ (n₂ + j·w_t)·Λ^j and
+h_j ≤ C·(j + 1)²·Λ^j for a constant C. On the other side h′_j ≥ τ^j·n₁, and
+h′_j ≥ τ^(j−1−i)·(v_2 + u_2·k′_i) for every i < j.
+
+- (B1) *If q_t < τ, then n₁ = 0, v_2 = 0, and u_2 = 0 or g = 0.* Here Λ < τ, so
+  τ^j·n₁ ≤ C·(j + 1)²·Λ^j for all j forces n₁ = 0, and in the same way v_2 + u_2·k′_i = 0
+  for every i ≥ 0. If u_2 > 0, then k′_0 = n₂ = 0 and k′_1 = w_2 = 0, so g = (v_2, w_2) = 0.
+- (B2) *If q_2 > q_t ≥ 1, then w_2 = 0.* k′_j ≥ q_2^(j−1)·(q_2·n₂ + w_2) and
+  k_j ≤ (n₂ + j·w_t)·q_t^j, so q_2·n₂ + w_2 = 0. *If q_t = 0 and q_2 ≥ 1, then w_2 = 0.*
+  Here k_j = w_t for j ≥ 1 and k′_j ≥ j·w_2.
+
+Whenever g = 0 turns up below, no rule is strict by Lemma III and the case is finished.
+
+*Case 2a: q_t ≥ 1,* so q_0 = q_1 = 0. The matrix part of ◁0 → ◁t reads u_0 ≥ u_t + ρ·q_t,
+so u_0 > 0. (U) for f1 → 0t reads σ·u_1 ≥ τ·u_t + u_0·q_t and (U) for t0 → 1t reads
+σ·u_0 ≥ τ·u_t + u_1·q_t. So σ²·u_0 ≥ σ·q_t·u_1 ≥ q_t²·u_0, and q_t ≤ σ < τ. By (B1), n₁ = 0,
+v_2 = 0, and we may assume u_2 = 0. By (B2) we may assume q_2 ≤ q_t, so q_2 < τ (if
+q_2 > q_t, then w_2 = 0 and g = 0). (U) for f2 → 1f reads u_f·q_2 ≥ τ·u_f, so u_f = 0; (U)
+for t2 → 2t reads u_t·q_2 ≥ τ·u_t, so u_t = 0. Now (H) for t2 → 2t reads v_t ≥ τ·v_t, so
+v_t = 0; (H) for f2 → 1f reads v_f ≥ v_1 + τ·v_f + u_1·w_f, so v_f = v_1 = 0; (H) for f1 → 0t
+reads 0 ≥ v_0 + u_0·w_t, so v_0 = 0 and w_t = 0; (H) for f0 → 0f reads 0 ≥ u_0·w_f, so
+w_f = 0. Finally (K) for f2 → 1f reads w_f + q_f·w_2 ≥ w_1 + q_1·w_f, so w_1 = 0, and (K) for
+t1 → 2f reads w_t + q_t·w_1 ≥ w_2 + q_2·w_f, so w_2 = 0. Hence g = 0.
+
+*Case 2b: q_t = 0.* By (B1), n₁ = 0, v_2 = 0, and we may assume u_2 = 0. By (B2) we may
+assume q_2 = 0. (U) for f2 → 1f reads 0 ≥ τ·u_f and (U) for t2 → 2t reads 0 ≥ τ·u_t, so
+u_f = u_t = 0. As in case 2a, (H) for t2 → 2t gives v_t = 0, (H) for f2 → 1f gives
+v_f = v_1 = 0, and (H) for f1 → 0t gives v_0 = 0. The vector parts of the three rules for
+`◁` are now
+
+    ρ·w_0 ≥ ρ·w_t        ρ·w_1 ≥ ρ·w_f        ρ·w_2 ≥ ρ·w_f.
+
+(K) for f1 → 0t, f2 → 1f and t1 → 2f reads w_f ≥ w_0 + q_0·w_t, w_f ≥ w_1 + q_1·w_f and
+w_t ≥ w_2 + q_2·w_f. So w_f ≥ w_0 ≥ w_t ≥ w_2 ≥ w_f and w_f ≥ w_1 ≥ w_f: all five are equal,
+the three vector parts are equalities, and no rule is strict. ∎
+
+### Right form
+
+Here m = (m₁, m₂) is the vector of `◁`, and σ = p_f = p_t ≥ 2. Only the matrices and vectors
+of f and t, the vector m, and the rules as a whole are used; no inequality (U) is needed.
+
+*The value of a number.* For a string w of binary digits define X(w) by X(empty) = m and
+X(ws) = M_s·X(w) + (v_s, w_s). This is the vector that the interpretation gives to the
+string ◁w of T (written reversed in the right form). Write X(w) = (h(w), k(w)) and
+Φ(w) = V(X(w)) = h(w) + ρ·k(w). Then
+
+    h(ws) = σ·h(w) + u_s·k(w) + v_s        k(ws) = q_s·k(w) + w_s
+
+    (E)   h(s₁…s_L) = σ^L·m₁ + Σ_{l=1..L} σ^(L−l)·(v_{s_l} + u_{s_l}·k(s₁…s_{l−1}))
+
+and every term of (E) is non-negative. For a number N ≥ 1 let bin(N) be its binary digits
+after the leading 1, with f for 0 and t for 1; ◁bin(N)▷ is the string of T that stands for
+N. Write Φ(N) for Φ(bin(N)), and C(N) for N/2 if N is even and (3N + 1)/2 if N is odd.
+
+*(F1) Φ does not increase along the trajectories of C:*
+
+    Φ(N) − Φ(N/2) ≥ r·a  for even N        Φ(N) − Φ(C(N)) ≥ r·b − r·g  for odd N ≥ 3.
+
+For even N, bin(N) = wf with w = bin(N/2), and Φ(N) = r·A·X(w) + r·a ≥ r·X(w) + r·a,
+because r·A ≥ r. For odd N, bin(N) = wt, and Φ(N) = r·B·X(w) + r·b ≥ r·G·X(w) + r·g +
+(r·b − r·g), because r·B ≥ r·G. Now G·X(w) + g is the vector of ◁w2. In T the string ◁w2 is
+rewritten to ◁bin(C(N)) by carry rules, which move the ternary digit to the left across
+one binary digit at a time, and one rule for `◁`, which absorbs it. (These rules do not
+change the number a string stands for, which is C(N) for ◁w2▷, and a string of binary
+digits is determined by its number.) Each of these rules is weakly decreasing and the maps
+of the digits are monotone, so G·X(w) + g ≥ X(bin(C(N))) entry by entry.
+
+*(F2) Growth along 2^(j+1) − 1.* bin(2^(j+1) − 1) = t^j. With Λ = max(σ, q_t),
+k(t^l) = q_t^l·m₂ + w_t·(1 + … + q_t^(l−1)) ≤ (m₂ + l·w_t)·Λ^l, and by (E)
+
+    Φ(t^j) ≤ C·(j + 1)²·Λ^j        for a constant C and all j.
+
+*(F3) Where the trajectory arrives.* C applied j times to 2^(j+1) − 1 gives 2·3^j − 1, and
+applied j times to 2^j − 1 it gives 3^j − 1. So by (F1) and (F2)
+
+    Φ(2·3^j − 1) ≤ C·(j + 1)²·Λ^j        Φ(3^j − 1) ≤ C·(j + 1)²·Λ^j.
+
+bin(2·3^j − 1) ends with t, bin(3^j − 1) ends with f, and both have at least 1.58·j − 2
+digits. *For every string z of binary digits there are infinitely many j for which both
+begin with z.* Indeed 3^j = 2^n·y with n the integer part of j·log₂3 and log₂y its
+fractional part. Because log₂3 is irrational, these fractional parts are dense in the
+interval from 0 to 1 (Kronecker's theorem). The binary expansion of 3^j begins with 1
+followed by z exactly when y lies in a certain interval inside [1, 2), so this happens for
+infinitely many j. For large j the expansion of 3^j − 1 differs from that of 3^j only in
+the last digit, and the expansion of 2·3^j − 1 is that of 3^j − 1 followed by 1.
+
+**Case A: q_t ≤ σ.** Then Λ = σ. Let z = z₁…z_i be a string of binary digits and j as in
+(F3), with L ≥ 1.58·j − 2 the number of digits of bin(2·3^j − 1). One term of (E) gives
+
+    σ^(L−i)·(v_{z_i} + u_{z_i}·k(z₁…z_{i−1})) ≤ Φ(2·3^j − 1) ≤ C·(j + 1)²·σ^j.
+
+Since σ ≥ 2 and L − i − j grows like 0.58·j, this is impossible for large j unless the
+bracket is zero. In the same way σ^L·m₁ ≤ C·(j + 1)²·σ^j gives m₁ = 0. As z was arbitrary:
+
+    m₁ = 0      v_f = v_t = 0      u_s·k(w) = 0 for s = f, t and every string w of binary digits.
+
+So h(w) = 0 and Φ(w) = ρ·k(w) for every such w.
+
+- If u_f > 0 or u_t > 0, then k(w) = 0 for every w, so Φ is zero on all numbers, and (F1)
+  with N = 4 and with N = 3 gives r·a ≤ 0 and r·b − r·g ≤ 0. No rule is strict.
+- If u_f = u_t = 0, the second coordinate is a one-dimensional interpretation of T in the
+  right form: multiplier q_x and constant w_x for a digit x, multiplier r₂ and constant 0
+  for `▷`, multiplier 0 and constant m₂ for `◁` (with the row r before it was divided by
+  r₁). The carry rules and the rules for `◁` are weakly decreasing because they are so in
+  the second coordinate. For ▷f → ▷ the second entry of r·A ≥ r reads r₁·u_f + r₂·q_f ≥ r₂,
+  that is, r₂·q_f ≥ r₂. For ▷t → ▷2 the second entry of r·B ≥ r·G reads
+  r₁·u_t + r₂·q_t ≥ r₁·u_2 + r₂·q_2, so r₂·q_t ≥ r₂·q_2; and r·b ≥ r·g reads
+  r₂·w_t ≥ r₁·v_2 + r₂·w_2, so r₂·w_t ≥ r₂·w_2. By Theorem 4 neither rule is strict in this
+  interpretation: r₂·w_f = 0 and r₂·w_t = r₂·w_2. Then r·a = r₁·v_f + r₂·w_f = 0 and
+  r·b − r·g = −r₁·v_2 ≤ 0. No rule is strict.
+
+**Case B: q_t > σ.** Then q_t ≥ 3. We show that one of the following holds:
+
+- (i) k(w) = 0 for every string w of binary digits, that is, m₂ = w_f = w_t = 0;
+- (ii) ρ = 0 and u_f = u_t = 0.
+
+By (D) for q and q_t ≥ 1, q_0 = q_1. Three cases.
+
+- q_f ≥ 1 and q_1 = 0. Then q_0 = 0, and q_2 = 0 from q_f·q_2 = q_1·q_f. The second entry of
+  the vector part of 2t → t2 reads w_2 + q_2·w_t ≥ w_t + q_t·w_2, so w_t = 0 and w_2 = 0. The
+  second entry of 2◁ → tf◁ reads w_2 + q_2·m₂ ≥ w_t + q_t·w_f + q_t·q_f·m₂, so w_f = 0 and
+  m₂ = 0. This is (i).
+- q_f = 0. Then q_t·q_1 = q_2·q_f = 0, so q_1 = q_0 = 0. The second entries of 1f → t0 and
+  0t → t1 read w_1 ≥ w_t + q_t·w_0 and w_0 ≥ w_t + q_t·w_1. So w_1 ≥ q_t²·w_1, hence
+  w_1 = 0, and then w_t = 0 and w_0 = 0. The second entry of 1t → f2 reads
+  w_1 + q_1·w_t ≥ w_f + q_f·w_2, so w_f = 0. The second entry of 0◁ → t◁ reads
+  w_0 + q_0·m₂ ≥ w_t + q_t·m₂, so m₂ = 0. This is (i).
+- q_f ≥ 1 and q_1 ≥ 1. Then q_0 = q_1 = q_2 and q_f·q_1 = q_0·q_t, so q_f = q_t; call it σ′.
+  Here k(ws) ≥ σ′·k(w), and Λ = σ′. Suppose (i) fails: k(z) > 0 for a string z of binary
+  digits. Then k(w) ≥ σ′^(|w|−|z|)·k(z) for every w that begins with z. Take j as in (F3)
+  for this z. If ρ > 0, then Φ(2·3^j − 1) ≥ ρ·σ′^(L−|z|)·k(z) with L ≥ 1.58·j − 2, which
+  contradicts (F3) for large j. If ρ = 0 and u_t > 0, write bin(2·3^j − 1) = wt; then
+  Φ(2·3^j − 1) = h(wt) ≥ u_t·k(w) ≥ u_t·σ′^(L−1−|z|)·k(z), the same contradiction. If ρ = 0
+  and u_f > 0, the same with bin(3^j − 1) = wf. What remains is (ii).
+
+In both cases (i) and (ii), Φ(w) = h(w) and h(ws) = σ·h(w) + v_s for strings of binary
+digits. Then Φ(t^j) ≤ σ^j·(m₁ + v_t), and the argument of case A, with σ in the place of Λ,
+gives m₁ = 0 and v_f = v_t = 0. So Φ is zero on all numbers, and by (F1) no rule is
+strict. ∎
+
+*What the proof for the right form uses.* It only uses that the value Φ(N) of the binary
+numeral of N cannot increase along the trajectory of N, and that the trajectory of
+2^(j+1) − 1 climbs to 2·3^j − 1, a number with about 1.58 times as many digits. A measure
+that weighs digits by powers of σ ≥ 2 cannot absorb that. The value representation at the
+top of this note escapes because its multiplier that matters is 1.
+
+## 6. What the solver is asked
 
 The solver z3 cannot decide these conditions as they stand: they are polynomial inequalities
 in 34 unknown integers, and z3 gives up. The question is therefore split into cases.
@@ -784,8 +1048,8 @@ every part. If z3 reports an integer solution, it is turned into a certificate a
 5. **Second pass.** The cases left undecided are taken up again with the results of
    sections 3 and 4. A pattern to which Theorem 6 or Theorem 8 applies is settled without
    the solver. For the others z3 is run again, with two changes. The conclusions of
-   Lemma III (left form: g ≠ 0), of Lemma IV (triangular patterns) and of Corollary 10
-   (irreducible digit matrices) are added as conditions. And a part that stays undecided is split by the size of the diagonal
+   Lemma III (left form: g ≠ 0), of Lemma IV and Theorem 9 (triangular patterns) and of
+   Corollary 10 (irreducible digit matrices) are added as conditions. And a part that stays undecided is split by the size of the diagonal
    entries: each one that the pattern makes positive is either 1 or at least 2 (entries
    that Lemma I shows to be equal count once); a combination that still stays undecided
    is split once more on an entry off the diagonal.
@@ -802,9 +1066,10 @@ the weak conditions can be met, among them one for each of the cases of Theorem 
 proof of Theorem 8 has to treat: with the matrices fixed the remaining problem is small, z3
 decides it, and it must find that no rule can be strict. And for digit matrices of each
 of the two kinds that Corollary 10 allows, the weak conditions must remain satisfiable
-when the condition of the corollary is added.
+when the condition of the corollary is added. Theorem 9 is tested in the same way as
+Theorems 5, 6 and 8, on triangular digit matrices with a multiplier 2 or 4.
 
-## 6. Results
+## 7. Results
 
 The full tables are in `results/dimension2/summary.md`, the verdict for every pattern in
 the `.jsonl` files next to it. After removing patterns that contradict a carry rule and one
@@ -812,27 +1077,23 @@ of each pair related by exchanging the coordinates, 7,495 zero patterns remain i
 
 | Form | Patterns | Refuted by z3, first pass | Theorem 6 | Theorem 8 | Refuted by z3, second pass | Interpretation found | Undecided |
 |---|---|---|---|---|---|---|---|
-| left | 7,495 | 7,350 | 96 | 26 | 17 | 0 | 6 |
-| right | 7,495 | 7,318 | 94 | 24 | 15 | 0 | 44 |
+| left | 7,495 | 7,350 | 96 | 26 | 23 | 0 | 0 |
+| right | 7,495 | 7,318 | 94 | 24 | 59 | 0 | 0 |
+
+No interpretation was found for any pattern, and no pattern is left undecided.
 
 The columns "Theorem 6" and "Theorem 8" count only patterns that the first pass left
 undecided. In all, the two theorems cover 1,873 of the 7,495 patterns in each form
 (Theorem 6: 1,043, Theorem 8: 1,512). On the patterns they cover, z3 by itself had refuted
-most and left the rest undecided; it never found an interpretation for one of them. So the solver and the theorems do not contradict each other anywhere.
+most and left the rest undecided; it never found an interpretation for one of them. So the
+solver and these theorems do not contradict each other anywhere.
 
-No interpretation was found for any pattern.
-
-The undecided patterns are all triangular: every digit matrix is upper triangular.
-
-- Left form, 6 patterns. In each the matrix of t has all three entries on and above the
-  diagonal positive. In five of them the matrices of 0 and 1 have a zero second row.
-- Right form, 44 patterns. In each the matrices of f and of t have positive entries in the
-  top left and top right corners.
-
-They are listed in `results/dimension2/summary.md`. For these z3 gave no answer within the
-limits used (5 to 20 seconds for each call of the solver, several hundred seconds for a
-pattern), with all the
-conditions of section 5.
+Theorem 9 enters differently: it does not settle a pattern by itself, it is a condition
+given to the solver for the triangular patterns. Without it the second pass left 6 patterns
+in the left form and 44 in the right form undecided, all of them triangular, and in every
+part that stayed open the top left entry of the matrix of f was at least 2 (the records are
+in `left-hand-without-theorem9.jsonl` and `right-hand-without-theorem9.jsonl`). With the
+condition of Theorem 9, z3 refutes each of these 50 patterns as one integer problem.
 
 `harness/theorem7_check.py` tests Theorems 7 and 8 on examples; its output is in
 `results/dimension2/theorem7-check.md`. Among the matrices with entries from 0 to 3 there are
@@ -841,21 +1102,24 @@ matrix of f positive, and each falls under a case of Theorem 7. For the 1,564 of
 which the matrix of 1 or of 2 is not zero, z3 confirms in both forms that no choice of the
 vectors and of r makes a strict rule strictly decreasing.
 
-## 7. Status
+## 8. Status
 
-- **Proved in writing:** Lemmas I to IV, Corollaries 1, 2 and 10, and Theorems 5 to 8. An
-  automated independent read of section 4 found no error and six gaps in the write-up,
-  which have been repaired. No person has read the proofs and no proof assistant has
-  checked them. The self-test of `harness/dimension2.py` and `harness/theorem7_check.py`
-  test the statements on examples.
-- **Rests on z3:** the 7,350 + 17 patterns in the left form and the 7,318 + 15 in the
-  right form that the theorems were not used for. A verdict "refuted" is an answer of the
-  solver and has no certificate that can be checked independently.
-- **Undecided:** 6 patterns in the left form and 44 in the right form, all triangular.
-- **Conclusion:** dimension 2 is not settled. What is established is that a
-  two-dimensional natural interpretation for T, if one exists, has upper triangular (or,
-  with the coordinates exchanged, lower triangular) digit matrices with one of the 50
-  undecided patterns, provided the solver's verdicts are correct. Without relying on the
-  solver: the matrix of f does not have both entries off the diagonal positive, the digit
-  matrices are not irreducible with the matrices of f, t and 0 invertible, and the
-  hypotheses of Theorems 5 and 6 fail.
+**Result, with its conditions.** If the written proofs of this note are correct and the
+verdicts of z3 are correct, then T has no two-dimensional natural matrix interpretation
+that removes a rule, in either form, with coefficients of any size. This is a
+machine-assisted result and not a theorem proved in writing.
+
+- **Proved in writing:** Lemmas I to IV, Corollaries 1, 2 and 10, and Theorems 5 to 9.
+  An automated independent read of section 4 found no error and six gaps in the write-up,
+  which have been repaired. Section 5 (Theorem 9) has not been read independently yet.
+  No person has read the proofs and no proof assistant has checked them. The self-test of
+  `harness/dimension2.py` and `harness/theorem7_check.py` test the statements on examples.
+- **Rests on z3:** every pattern that Theorems 6 and 8 do not cover: 7,350 + 23 in the left
+  form and 7,318 + 59 in the right form. A verdict "refuted" is an answer of the solver and
+  has no certificate that can be checked independently. For 6 + 44 of these patterns the
+  verdict also rests on Theorem 9, and for the patterns of the second pass on Lemmas III
+  and IV and Corollary 10.
+- **Undecided:** nothing.
+- **Not covered at all:** arctic interpretations, dimension 3 and higher, and the other
+  encodings (the shifted systems and the block systems), for which only the bounded
+  search of Phase 3 exists.

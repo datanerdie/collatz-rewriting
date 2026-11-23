@@ -52,6 +52,10 @@ results that are proved in writing in docs/dimension2.md:
               top row is positive and some vector has a non-zero second entry, because
               otherwise one coordinate would be a one-dimensional interpretation, which
               Theorem 4 excludes.  The same with the coordinates exchanged.
+  Theorem 9   (both forms) if every digit matrix is upper triangular, the top left entry of
+              the matrix of f is at most 1; in the right form this is proved when the matrix
+              of t has the same top left entry.  The same with the coordinates exchanged.
+              Added as a condition.
 
 The first pass is recorded in {form}.jsonl and rests on z3 alone; the second pass is recorded
 in {form}-hand.jsonl.
@@ -305,9 +309,17 @@ class Encoding:
                 if triangular:
                     cons.append(self.row[1 - k] > 0)
                     cons.append(z3.Or([self.v[s][k] > 0 for s in DIGITS] + [self.end[k] > 0]))
+                    cons.append(self.theorem9(1 - k))
         if hand and is_full_system(rules) and up and lo:
             cons.append(self.corollary10())
         self.constraints = cons
+
+    def theorem9(self, j):
+        """Theorem 9 for triangular digit matrices; j is the coordinate that the other one
+        feeds into (0 if they are upper triangular).  The entry (j, j) of the matrix of f is
+        at most 1; in the right form, provided the matrix of t has the same entry there."""
+        fa, tb = self.M['a'][j][j], self.M['b'][j][j]
+        return fa <= 1 if form_of(self.rules) == 'left' else z3.Implies(fa == tb, fa <= 1)
 
     def trace(self, s):
         return self.M[s][0][0] + self.M[s][1][1]
@@ -684,6 +696,37 @@ def selftest():
                                  + [enc.row[0] + enc.row[1] >= 1], real, 60)[0])
         report(f'Corollary 10 allows an instance, {form} form ({title})',
                answers == ['sat', 'sat'], f'weak conditions with the corollary: {answers}')
+
+    # 5. Theorem 9 on concrete triangular matrices that satisfy its hypothesis: with the
+    #    first entry of the top row positive (Lemma IV) the weak conditions can be met, and
+    #    no strict rule is possible.
+    T2, T4, H = [[2, 1], [0, 1]], [[4, 3], [0, 1]], [[2, 1], [0, 0]]         # T4 = T2*T2
+    for form, title, mats in [
+            ('left', 'f, t = T; 0, 1, 2 = T*T', dict(a=T2, b=T2, e=T4, f=T4, g=T4)),
+            ('left', 'f, t forget the second coordinate', dict(
+                a=[[2, 0], [0, 0]], b=[[2, 0], [0, 0]], e=[[4, 0], [0, 1]], f=[[4, 0], [0, 1]],
+                g=[[4, 0], [0, 1]])),
+            ('left', 'f, t = 2·identity + shift; 0, 1, 2 = their square', dict(
+                a=[[2, 1], [0, 2]], b=[[2, 1], [0, 2]], e=[[4, 4], [0, 4]], f=[[4, 4], [0, 4]],
+                g=[[4, 4], [0, 4]])),
+            ('left', 'found by z3 for a pattern it had left undecided', dict(
+                a=[[4, 0], [0, 0]], b=[[4, 1], [0, 3]], e=[[16, 16], [0, 0]],
+                f=[[16, 16], [0, 0]], g=[[16, 4], [0, 15]])),
+            ('right', 'all five digits = T', dict(a=T2, b=T2, e=T2, f=T2, g=T2)),
+            ('right', 'f, t forget the second coordinate', dict(
+                a=H, b=H, e=[[2, 0], [0, 1]], f=[[2, 0], [0, 1]], g=[[2, 0], [0, 1]])),
+            ('right', 'f, t = T*T; 0, 1, 2 = T', dict(a=T4, b=T4, e=T2, f=T2, g=T2))]:
+        rules, _ = parse_problem(systems.COLLATZ.search_problem(form))
+        p = tuple(sum(1 << k for k, (i, j) in enumerate(BITS) if mats[s][i][j]) for s in DIGITS)
+        covered = (all(mats[s][1][0] == 0 for s in DIGITS) and mats['a'][0][0] >= 2
+                   and (form == 'left' or mats['a'][0][0] == mats['b'][0][0]))
+        enc = Encoding(rules, p, real=True)
+        fix = [enc.M[s][i][j] == mats[s][i][j] for s in DIGITS for i, j in BITS]
+        weak, _ = solve(enc.constraints + fix + [enc.row[0] >= 1], True, 60)
+        strict, _ = solve(enc.whole() + fix, True, 60)
+        report(f'Theorem 9 on an instance, {form} form ({title})',
+               covered and weak == 'sat' and strict == 'unsat',
+               f'covered: {covered}, weak conditions: {weak}, with a strict rule: {strict}')
     return ok
 
 
@@ -761,7 +804,8 @@ def summary(args):
            '  the pattern; no solver is involved. A pattern that both theorems exclude is',
            '  counted under Theorem 6.',
            '- "z3 again": z3 refuted the pattern with the extra split on the values of matrix',
-           '  entries and with the conditions of Lemma III (left form) and Lemma IV.',
+           '  entries and with the conditions of Lemma III (left form), Lemma IV and',
+           '  Theorem 9 (triangular patterns).',
            '',
            '| Form | Patterns | None, first pass | Theorem 6 | Theorem 8 | z3 again | Found | '
            'Undecided |',
@@ -816,6 +860,12 @@ def summary(args):
         if again:
             details += ['', f'Second pass: of the {len(again)} patterns refuted by z3, '
                         f'{with_diag} needed the split on the values of matrix entries.']
+        before = load(os.path.join(args.out, f'{form}-hand-without-theorem9.jsonl'))
+        if before:
+            open9 = [p for p, r in before.items() if r['verdict'] == 'undecided']
+            details += ['', f'Without the condition of Theorem 9 the second pass left '
+                        f'{len(open9)} of these patterns undecided '
+                        f'(`{form}-hand-without-theorem9.jsonl`).']
         # The theorems against the first pass: the two must never contradict each other.
         for name, test in (('Theorem 6', theorem6), ('Theorem 8', lambda p: theorem8(p, form))):
             covered = [r for r in rs if test(tuple(r['pattern']))]
