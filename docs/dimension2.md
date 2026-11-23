@@ -10,10 +10,13 @@ the number obtained by appending those digits. Every carry rule is then an equal
 dimension 2 the question is no longer whether the carries can be respected, but whether any
 such representation can be combined with the end rules.
 
-This note has four parts: a lemma about the carry rules that holds in every dimension, a
-simplification of the end markers, two theorems that exclude families of interpretations
-(one in every dimension, a stronger one in dimension 2), and a case analysis for dimension 2
-carried out by a solver. The status of each part is stated in section 6.
+This note has five parts: a lemma about the carry rules that holds in every dimension, a
+simplification of the end markers, two theorems that exclude the interpretations in which
+the digit t or the digit 2 mixes the coordinates (one in every dimension, a stronger one in
+dimension 2), a description of the digit matrices when the digit f mixes the coordinates,
+with a theorem that excludes those interpretations in the left form and part of them in the
+right form, and a case analysis for the rest of dimension 2 carried out by a solver. The
+status of each part is stated in section 7.
 
 ## 1. The carry rules can be undone around a circle
 
@@ -316,9 +319,300 @@ entries w, and γ = u + w is 0 or 1.
     this is J·N + N·J·N = 0, so J·N = 0, N = 0 and A = I. So E = F = J. From
     (r·B − r·G)·x = 0, r = r·J, so r is a multiple of y = (1, 1). By (P), a contradiction. ∎
 
-What Theorems 5 and 6 leave open in dimension 2 are the interpretations in which the matrix
-of f has a zero on its diagonal, and those in which neither t nor 2 mixes the coordinates
-(their matrices are both triangular or diagonal).
+Theorem 6 needs a digit t or 2 that mixes the coordinates and a matrix of f with a positive
+diagonal. The next section starts from the digit f instead.
+
+## 4. Interpretations in which the digit f mixes the coordinates
+
+This section is about dimension 2 and is proved in writing. Its first result concerns the
+digit matrices alone: when the matrix of f mixes the two coordinates, the carry equalities
+of Corollary 1 leave very few possibilities.
+
+Throughout the section A is a 2×2 matrix with non-negative integer entries whose two entries
+off the diagonal are positive. Such a matrix is irreducible. Notation and elementary facts:
+
+- A has two real eigenvalues α > α′, because the discriminant (A₁₁ − A₂₂)² + 4·A₁₂·A₂₁ of its
+  characteristic polynomial is at least 4. The larger one is the spectral radius, with a
+  positive column x and a positive row y as eigenvectors. Since
+  α = (trace + √discriminant)/2, α ≥ 1, and α = 1 only for A = J. Since α + α′ is the trace,
+  α′ = −α only if both diagonal entries of A are zero.
+- Π = x·y/(y·x) (a column times a row, divided by a number) satisfies A·Π = Π·A = α·Π and
+  Π·Π = Π. All its entries are positive and its trace is 1, so its diagonal entries are
+  less than 1. A = α·Π + α′·(I − Π).
+- A is not a multiple of I, so a matrix that commutes with A has the form u·I + w·A. It is
+  then ε·Π + ε′·(I − Π) for two numbers ε, ε′, and has x and y as eigenvectors with
+  eigenvalue ε.
+- A matrix M with non-negative entries and M·x = 0 or y·M = 0 is zero.
+- If a column times a row equals another column times a row and the product is not zero,
+  the two columns are multiples of each other and so are the two rows.
+
+The six carry equalities, with A, B, E, F, G for the matrices of f, t, 0, 1, 2 in the order
+of the left form, are numbered
+
+    (1) A·E = E·A    (2) A·F = E·B    (3) A·G = F·A
+    (4) B·E = F·B    (5) B·F = G·A    (6) B·G = G·B
+
+**Theorem 7 (the digit matrices when f mixes the coordinates).** Let A, B, E, F, G be 2×2
+matrices with non-negative integer entries that satisfy (1) to (6), where both entries off
+the diagonal of A are positive. Then one of the following holds, with ε the eigenvalue of E
+on x and y.
+
+- (S0) F = G = 0.
+- (S1) x and y are eigenvectors of all five matrices, with eigenvalues α, α, ε, ε, ε for
+  A, B, E, F, G, and ε > 0.
+- (S2) det A > 0; y is a left eigenvector of all five matrices with eigenvalues
+  α, α, ε, ε, ε, and ε > 0; the eigenvalues of A and those of B are α and α/2, and the
+  eigenvalues of each of E, F, G are ε and ε/3.
+- (S3) det A = 0; F·x = ε·x with ε > 0; and there is a positive row ỹ with ỹ·B = α·ỹ and
+  ỹ·G = ε·ỹ.
+
+The value representation at the top of this note is of the kind (S2), up to the choice of
+coordinates and the order of the products. In the proof, (S2) arises from the relations
+τ·A = A·τ·τ and τ·E = E·τ·τ·τ for τ = B·A⁻¹. In the value representation τ adds 1 to the
+number, and the relations say 2·(n + 1) = 2·n + 2 and 3·(n + 1) = 3·n + 3. So when all the
+matrices are invertible, the six carry equalities force either t = f, or this arithmetic.
+
+*Proof.* If F = 0, then A·G = 0 by (3), so α·(y·G) = 0 and G = 0: this is (S0). Assume
+F ≠ 0. By (1), E = ε·Π + ε′·(I − Π).
+
+*First case: det A ≠ 0.* By (2) and (3), F = A⁻¹·E·B and G = A⁻¹·F·A. So E ≠ 0 and B ≠ 0,
+and ε > 0 because E·x = ε·x.
+
+(a) *E is singular.* Then ε′ = 0 and E = ε·Π, so F = (ε/α)·Π·B. Equality (4), multiplied by
+α·(y·x)/ε, reads α·(B·x)·y = x·(y·B·B). Here B·x ≠ 0. So B·x = β·x with β > 0, and
+y·B·B = α·β·y; multiplying this by x gives β² = α·β. So B·x = α·x and y·B·B = α²·y. Put
+z = y·B, so that z·x = α·(y·x). Now G = (ε/α²)·Π·B·A, and (5) reads
+ε·x·z = (ε/α²)·x·(z·A·A), so z·A·A = α²·z.
+
+*z = α·y.* If α′ ≠ −α: from A·A = α²·Π + α′²·(I − Π), z·A·A = α²·z says z·(I − Π) = 0, so
+z = z·Π = α·y. If α′ = −α, the diagonal of A is zero. From y·B·B = α²·y,
+y·(B − α·I)·(B + α·I) = 0. If −α is not an eigenvalue of B this gives y·B = α·y. If it is,
+the eigenvalues of B are α and −α, its trace is zero, so its diagonal is zero too; then
+B·x = α·x = A·x determines both entries off the diagonal, B = A, and again y·B = α·y.
+
+With z = α·y: F = (ε/α)·x·z/(y·x) = ε·Π and G = (ε/α²)·x·(z·A)/(y·x) = ε·Π. This is (S1).
+
+(b) *E is invertible.* Put τ = B·A⁻¹, τ₁ = A⁻¹·τ·A, τ₂ = A⁻²·τ·A² and θ = E⁻¹·τ·E. The last
+three are similar to τ. Substitute B = τ·A, F = A⁻¹·E·τ·A and G = A⁻²·E·τ·A² into (4), (5)
+and (6), multiply on the left by E⁻¹·A, E⁻¹·A², E⁻¹·A² and on the right by A⁻¹, A⁻³, A⁻³
+respectively, and use that E commutes with A. The result is
+
+    A·θ = τ·A·τ        A²·θ·τ·A⁻² = τ        A²·θ·A⁻¹·τ·A⁻¹ = τ·A²·τ·A⁻²
+
+that is,
+
+    θ = τ₁·τ        θ·τ = τ₂        θ·τ₁ = τ₂·τ.                                  (∗)
+
+- *B is invertible.* Then so are τ, τ₁, τ₂. From (∗), τ₂ = τ₁·τ·τ and
+  τ₁·τ·τ₁ = τ₂·τ = τ₁·τ·τ·τ; cancelling, τ₁ = τ·τ and then θ = τ·τ·τ. So τ is similar to
+  its square and to its cube, and its pair of eigenvalues (complex numbers, not zero) is
+  unchanged by squaring and by cubing. If squaring fixes each of them, both are 1. If it
+  exchanges them, λ₁⁴ = λ₁, so λ₁³ = 1 and likewise λ₂³ = 1; cubing then turns the pair
+  into (1, 1), so again both are 1. Hence N = τ − I satisfies N·N = 0, τ·τ = I + 2·N, and
+  τ₁ = τ·τ becomes N·A = 2·A·N.
+
+  If N = 0, then B = A, F = A⁻¹·E·A = E and G = E. E commutes with A: this is (S1).
+
+  If N ≠ 0, write N = c·d with a column c and a row d; d·c = 0 because N·N = 0. Then
+  N·A = 2·A·N reads c·(d·A) = 2·(A·c)·d, and the left side is not zero. So A·c = μ·c and
+  d·A = 2·μ·d with a real μ ≠ 0: the eigenvalues of A are μ and 2·μ. The spectral radius
+  α > 0 is one of them, so μ > 0, α = 2·μ, α′ = α/2 and det A = α²/2 > 0. The row d is a
+  left eigenvector for α, hence a multiple of y; after rescaling c, d = y. Then
+  B = τ·A = A + α·c·y, so y·B = α·y and B·c = (α/2)·c. Also
+  y·F = y·A⁻¹·E·B = ε·y and y·G = y·A⁻¹·F·A = ε·y. In the same way θ = τ·τ·τ = I + 3·N
+  becomes N·E = 3·E·N, that is c·(y·E) = 3·(E·c)·y, so E·c = (ε/3)·c; and then
+  F·c = A⁻¹·E·B·c = (ε/3)·c and G·c = A⁻¹·F·A·c = (ε/3)·c. This is (S2).
+
+- *B is singular.* B ≠ 0, so τ has rank one: τ·τ = κ·τ with κ the trace of τ. From (∗),
+  τ₂ = θ·τ = τ₁·τ·τ = κ·τ₁·τ = κ·θ. Both τ₂ and θ are similar to τ, so they are not zero
+  and have trace κ; hence κ ≠ 0 and κ = κ², κ = 1. Write τ = c·w with w·c = 1. Then
+  τ₁ = (A⁻¹·c)·(w·A), τ₂ = (A⁻²·c)·(w·A²) and θ = τ₁·τ = (w·A·c)·(A⁻¹·c)·w. From θ = τ₂,
+  A⁻²·c is a multiple of A⁻¹·c, so A·c = μ·c with μ ≠ 0; then θ = c·w = τ. The third
+  relation in (∗) is now τ·τ₁ = τ·τ = τ, that is (1/μ)·c·(w·A) = c·w, so w·A = μ·w. So c
+  and w are a right and a left eigenvector of A for the same eigenvalue, with w·c = 1:
+  τ is Π if μ = α, and I − Π if μ = α′. And B = τ·A = μ·τ. The matrix α′·(I − Π) has
+  entries −α′·Π₁₂ and α′·(1 − Π₁₁), which are not both non-negative since α′ ≠ 0. So
+  B = α·Π, and F = A⁻¹·E·B = ε·Π, G = A⁻¹·F·A = ε·Π. This is (S1).
+
+*Second case: det A = 0.* Then α′ = 0, A = α·Π, every entry of A is positive, and α is the
+trace of A, at least 2. Equality (3) reads x·(y·G) = (F·x)·y, and F·x ≠ 0; so F·x = φ·x and
+y·G = φ·y with φ > 0. Multiplying (2) by y on the left gives α·(y·F) = ε·(y·B); as y·F ≠ 0,
+ε > 0 and y·B = (α/ε)·(y·F). Multiplying (5) by y on the left gives
+y·B·F = y·G·A = φ·α·y, so y·F·F = φ·ε·y; multiplying by x, φ² = φ·ε. So φ = ε:
+
+    F·x = ε·x        y·G = ε·y        y·F·F = ε²·y        y·B = (α/ε)·(y·F).
+
+If −ε is not an eigenvalue of F, then y·(F − ε·I)·(F + ε·I) = 0 gives y·F = ε·y, so
+y·B = α·y, and ỹ = y has the properties in (S3). If −ε is an eigenvalue of F, its
+eigenvalues are ε and −ε, its trace is zero, so its diagonal is zero, its two other entries
+are positive, and F·F = ε²·I. Put ỹ = y·F, a positive row, so that y·B = (α/ε)·ỹ. Multiplying
+(6) by y on the left: y·B·G = y·G·B = ε·(y·B), so ỹ·G = ε·ỹ. Multiplying (5), which reads
+B·F = α·(G·x)·y/(y·x), by F on the right: ε²·B = α·(G·x)·ỹ/(y·x). Hence
+ỹ·B = α·(ỹ·G·x)/(ε²·(y·x))·ỹ = α·(y·F·x)/(ε·(y·x))·ỹ = α·ỹ. This is (S3). ∎
+
+`harness/theorem7_check.py` lists every solution of (1) to (6) with entries up to a bound
+and tests the four cases on each; with entries up to 3 there are 39,396 solutions and each
+is in one of the cases (`results/dimension2/theorem7-check.md`). This is a check of the
+statement on small examples, not part of the proof.
+
+One part of the proof does not need a matrix of f that mixes the coordinates.
+
+**Corollary 10 (dimension 2, both forms).** Let A, B, E, F, G be real 2×2 matrices that
+satisfy (1) to (6), or the same six equalities with every product reversed, and let A, B
+and E be invertible. Then either B = A and E = F = G, or there are real numbers μ ≠ 0 and
+ν ≠ 0 such that A and B have the eigenvalues μ and 2·μ, and E, F and G the eigenvalues ν
+and 3·ν. In the second case B has the trace and the determinant of A, with
+2·(trace A)² = 9·det A, and F and G have the trace and the determinant of E, with
+3·(trace E)² = 16·det E.
+
+By Corollary 1 this applies to every interpretation in which the digit matrices are
+irreducible (for instance one of them triangular upward and another downward) and those of
+f, t and 0 are invertible.
+
+*Proof.* In the proof of Theorem 7, the part "(b), B is invertible" uses of A only that it
+is invertible, as far as the statement that A·c = μ·c and d·A = 2·μ·d with a real μ ≠ 0, or
+else N = 0, B = A and E = F = G. In the first alternative B = A + 2·μ·c·d, so B·c = μ·c and
+d·B = 2·μ·d. In the same way N·E = 3·E·N gives E·c = ν·c and d·E = 3·ν·d with a real
+ν ≠ 0, and then F = A⁻¹·E·B and G = A⁻¹·F·A satisfy F·c = ν·c, d·F = 3·ν·d, G·c = ν·c and
+d·G = 3·ν·d. For the reversed equalities, apply this to the transposed matrices. ∎
+
+**Theorem 8 (dimension 2).** There is no two-dimensional natural matrix interpretation that
+makes every rule of T weakly decreasing and a strict rule strictly decreasing, and in which
+
+- *(left form)* both entries off the diagonal of the matrix of f are positive; or
+- *(left form)* the digit matrices are irreducible in the sense of Corollary 1 and the
+  matrices of f, t and 0 are invertible; or
+- *(right form)* both entries off the diagonal of the matrix of f are positive and its
+  determinant is negative; in particular, if it also has a zero on its diagonal.
+
+The proof uses two steps. The first is taken from the proof of Theorem 5.
+
+- (L) *In the left form, if a positive row ỹ satisfies ỹ·B = β·ỹ and ỹ·G = γ·ỹ with γ > β
+  and γ ≥ 1, no rule is strict.* This is the part "g = 0" of the proof of Theorem 5, which
+  uses the row only through these properties.
+- (V) *In the left form, if the digit matrices are irreducible, A, B and E are invertible
+  and B ≠ A, no rule is strict.*
+
+*Proof of (V).* By Corollary 1 the equalities (1) to (6) hold. By Corollary 10 and its
+proof there are a column c, a row d with d·c = 0, and real numbers μ ≠ 0, ν ≠ 0 such that
+A·c = μ·c, B = A + 2·μ·c·d, and d is a left eigenvector of A and B with eigenvalue 2·μ and
+of E, F and G with eigenvalue 3·ν.
+
+The spectral radius of A is one of its eigenvalues μ and 2·μ, so μ > 0; put α = 2·μ. The
+trace 3·μ and the determinant 2·μ² of A are integers, so μ is an integer (if 3·μ = k, then
+2·k²/9 is an integer and 3 divides k) and α ≥ 2. A matrix with non-negative entries has a
+left and a right eigenvector with non-negative entries for its spectral radius. Since α is
+a simple eigenvalue of A, d is a multiple of such a row, and after rescaling c its entries
+are non-negative. If one of them were zero, the five equations d·M = (eigenvalue)·d would
+give every digit matrix a zero at the same place off the diagonal, and the digit matrices
+would not be irreducible. So d is positive. Write y for it and ε = 3·ν; then y·B = α·y and
+y·G = ε·y, and ε > 0.
+
+Let x₀ be an eigenvector of A for α with non-negative entries, c′ = (y·x₀)·c, and
+x_t = x₀ + t·c′ for a number t. Then y·x_t = y·x₀ > 0,
+
+    A·x_t = α·x_{t/2}        B·x_t = A·x_t + α·c·(y·x_t) = α·x_{t/2+1}.
+
+In particular B·x₂ = α·x₂. The eigenvalues of B are α and α/2, so x₂ is a multiple of a
+vector with non-negative entries, and has non-negative entries itself because y·x₂ > 0. E
+commutes with A, so E·x₀ is a multiple of x₀, and multiplying by y shows E·x₀ = ε·x₀; in
+the same way G·x₂ = ε·x₂, by (6).
+
+Put ρ_t = r·x_t, so ρ₀ ≥ 0, ρ₂ ≥ 0 and ρ₁ = (ρ₀ + ρ₂)/2. The matrix parts of ◁0 → ◁t and
+◁2 → ◁ft, multiplied by x₀ and by x₂, give
+
+    ε·ρ₀ ≥ r·B·x₀ = α·ρ₁        ε·ρ₂ ≥ r·A·B·x₂ = α·(r·A·x₂) = α²·ρ₁.
+
+Suppose ε ≤ α. The first inequality gives ρ₁ ≤ ρ₀, hence ρ₂ ≤ ρ₁. The second then gives
+α²·ρ₁ ≤ ε·ρ₂ ≤ α·ρ₁, so ρ₁ = 0 because α ≥ 2, and ρ₀ = ρ₂ = 0. The row r is not zero; at a
+coordinate where it is positive, x₀ and x₂ are both zero, so both are multiples of the
+other unit vector, and c′ = (x₂ − x₀)/2 is a multiple of x₀. That is impossible, because c′
+and x₀ are eigenvectors of A for different eigenvalues. So ε > α ≥ 2, and (L) applies with
+ỹ = y, β = α, γ = ε. ∎
+
+*Proof, left form, first statement.* The digit matrices are irreducible, so (1) to (6) hold
+by Corollary 1 and Theorem 7 applies. The row r is not zero, so r·x > 0. The matrix part of ◁1 → ◁ff is
+r·F ≥ r·A·A; multiplied by x it gives r·F·x ≥ α²·(r·x) > 0. So F ≠ 0, which excludes (S0),
+and whenever F·x = ε·x, ε ≥ α².
+
+*(S1).* If α > 1, then ε ≥ α² > α, and (L) applies with ỹ = y, β = α, γ = ε. If α = 1,
+then A = J, x and y are (1, 1), and ε ≥ 1. If ε > 1, (L) applies again. If ε = 1, every
+digit matrix has non-negative integer entries with all row sums and column sums equal to 1,
+so it is I or J. The rule ◁1 → ◁ff requires r·F ≥ r·A·A = r. If F = J this means that the
+two entries of r are equal. If F = I, then (3) gives G = I, (5) gives B = J, (2) gives
+E = I, and ◁0 → ◁t requires r = r·E ≥ r·B = r·J, so again the entries of r are equal. In
+both cases r is a multiple of y and all five matrices fix y, which (P) in the proof of
+Theorem 6 excludes.
+
+*(S3).* Here α ≥ 2 and ε ≥ α² > α, and (L) applies with the row ỹ, β = α, γ = ε.
+
+*(S2).* The eigenvalues of A, B and E are not zero, so these matrices are invertible. If
+B ≠ A, (V) applies. If B = A, then E = F = G by Corollary 10, and since E commutes with A
+this is the situation of (S1). ∎
+
+*Proof, left form, second statement.* If B ≠ A, this is (V). If B = A, then E = F = G by
+Corollary 10, and E commutes with A by (1). If both entries off the diagonal of A are
+positive, the first statement applies. Otherwise A is triangular or diagonal. If A is not a
+multiple of I, then E = u·I + w·A is triangular in the same direction, or diagonal, and
+the digit matrices are not irreducible. So A = B = s·I with an integer s ≥ 1, and
+E = F = G has both entries off the diagonal positive. Theorem 6 excludes this. ∎
+
+*Proof, right form.* In the right form the carry equalities hold with every product
+reversed, so the transposed matrices satisfy (1) to (6) and Theorem 7 applies to them. The
+determinant is negative, so (S2) and (S3) are excluded. What remains is F = G = 0, or (S1),
+which reads the same for the matrices themselves: a positive column x and a positive row y
+are eigenvectors of all five, with eigenvalues α, α, ε, ε, ε. Write λ(v) = y·v.
+
+*F = G = 0.* The rules 2f → f1 and 1t → f2 give g ≥ a + A·f and f ≥ a + A·g, so
+g ≥ a + A·A·g and λ(g) ≥ λ(a) + α²·λ(g). As α ≥ 1, λ(a) = 0 and a = 0. The rule 2t → t2
+gives g ≥ b + B·g ≥ b. So r·a = 0 and r·b ≤ r·g: no rule is strict.
+
+*(S1).* The matrix part of ▷t → ▷2, multiplied by x, gives α·(r·x) ≥ ε·(r·x), so α ≥ ε.
+Multiplying the vector parts of 2t → t2 and 2◁ → tf◁ by y,
+
+    (ε − 1)·λ(b) ≥ (α − 1)·λ(g)        λ(g) ≥ λ(b) + Δ,   Δ = α·λ(a) + (α² − ε)·λ(m) ≥ 0,
+
+so 0 ≥ (α − ε)·λ(b) + (α − 1)·Δ. If α > 1, then Δ = 0, so a = 0 and, because α² > α ≥ ε,
+m = 0; the rule 2◁ → tf◁ then reads g ≥ b, and no rule is strict. If α = 1, then A = J, x
+and y are (1, 1), and ε, a row sum of E, is 0 or 1. If ε = 0, then E = F = G = 0, the case
+already treated. If ε = 1, every digit matrix is I or J; ▷f → ▷ requires r·J ≥ r, so r is a
+multiple of y, and (P) gives a contradiction. ∎
+
+In the right form the cases (S2) and (S3) are not settled by this argument: after
+transposing they provide a common *right* eigenvector, while the vector conditions are
+tested with left eigenvectors. Theorem 6 covers them when t or 2 also mixes the coordinates.
+The two parts of the proof above that do not use the determinant still say something:
+
+**Corollary 9 (right form, dimension 2).** In a two-dimensional natural matrix
+interpretation, in the right form, that makes every rule of T weakly decreasing and a
+strict rule strictly decreasing, and in which both entries off the diagonal of the matrix
+of f are positive, the digit matrices satisfy one of the following.
+
+- det A > 0; B has the same trace and the same determinant as A, and
+  2·(trace A)² = 9·det A; E, F, G have the same trace and the same determinant, and
+  3·(trace E)² = 16·det E.
+- det A = 0; there is an integer ε > 0 with E·A = ε·A and A·F = ε·A; the trace of A is an
+  eigenvalue of B, and ε is an eigenvalue of G.
+
+*Proof.* The transposed matrices satisfy the hypotheses of Theorem 7. The cases (S0) and
+(S1) were excluded in the proof of Theorem 8 without using the determinant, so (S2) or (S3)
+holds for the transposed matrices. Trace, determinant and eigenvalues do not change under
+transposition. In (S2) the eigenvalues of A and B are α and α/2, with sum 3·α/2 and product
+α²/2; those of E, F, G are ε and ε/3, with sum 4·ε/3 and product ε²/3. In (S3), A = α·Π
+with α the trace of A; transposing F·x = ε·x gives y·F = ε·y for the positive row y of A,
+so A·F = ε·A; E·A = ε·A because E·x = ε·x; α is an eigenvalue of B and ε one of G. Finally
+ε is a rational number, because E·A = ε·A with integer matrices and A ≠ 0, and an
+eigenvalue of an integer matrix, hence an integer. ∎
+
+What Theorems 5, 6 and 8 leave open in dimension 2:
+
+- in the left form, the interpretations in which the matrix of f is triangular or diagonal,
+  Theorem 6 does not apply (f has a zero on its diagonal, or neither t nor 2 mixes the
+  coordinates), and the second statement of Theorem 8 does not apply (all digit matrices
+  are triangular in the same direction, or one of the matrices of f, t, 0 is singular);
+- in the right form, those in which the matrix of f is triangular or diagonal and
+  Theorem 6 does not apply; and those in which f mixes the coordinates, the determinant of
+  its matrix is not negative, and neither t nor 2 mixes the coordinates.
 
 For the case in which no digit mixes the coordinates in one direction there is a reduction
 to dimension 1.
@@ -341,7 +635,7 @@ the first entries of the vectors satisfy every condition by themselves, and with
 entry of r as the multiplier of the top marker they form a one-dimensional interpretation
 with a strict rule, again against Theorem 4. ∎
 
-## 4. What the solver is asked
+## 5. What the solver is asked
 
 The solver z3 cannot decide these conditions as they stand: they are polynomial inequalities
 in 34 unknown integers, and z3 gives up. The question is therefore split into cases.
@@ -373,10 +667,11 @@ every part. If z3 reports an integer solution, it is turned into a certificate a
 `checker/check.py`. Otherwise the case is *undecided*.
 
 5. **Second pass.** The cases left undecided are taken up again with the results of
-   section 3. A pattern to which Theorem 6 applies is settled without the solver. For the
-   others z3 is run again, with three changes. The conclusions of Lemma III (left form:
-   g ≠ 0) and of Lemma IV (triangular patterns) are added as conditions. The time limits
-   are longer. And a part that stays undecided is split by the size of the diagonal
+   sections 3 and 4. A pattern to which Theorem 6 or Theorem 8 applies is settled without
+   the solver. For the others z3 is run again, with two changes. The conclusions of
+   Lemma III (left form: g ≠ 0), of Lemma IV (triangular patterns), of Corollary 9 (right
+   form, f mixes the coordinates) and of Corollary 10 (irreducible digit matrices) are
+   added as conditions. And a part that stays undecided is split by the size of the diagonal
    entries: each one that the pattern makes positive is either 1 or at least 2 (entries
    that Lemma I shows to be equal count once); a combination that still stays undecided
    is split once more on an entry off the diagonal.
@@ -387,17 +682,20 @@ forms, and its transpose does not, which tests the order of every product. And f
 smaller systems that do have a proof (T without `t▷ → 2▷` in the left form, T without the
 left-end rules in the right form) the same procedure finds an interpretation that the checker
 accepts; for the first of them also when the condition of Lemma III is added, as it must,
-since the proof of the lemma does not use the rule that was dropped. Finally Theorems 5
-and 6 are tested on concrete digit matrices that satisfy their hypotheses and for which the
-weak conditions can be met: with the matrices fixed the remaining problem is small, z3
-decides it, and it must find that no rule can be strict.
+since the proof of the lemma does not use the rule that was dropped. Finally Theorems 5,
+6 and 8 are tested on concrete digit matrices that satisfy their hypotheses and for which
+the weak conditions can be met, among them one for each of the cases of Theorem 7 that the
+proof of Theorem 8 has to treat: with the matrices fixed the remaining problem is small, z3
+decides it, and it must find that no rule can be strict. And for digit matrices of each
+of the kinds that Corollaries 9 and 10 allow, the weak conditions must remain satisfiable
+when the conditions of the corollaries are added.
 
-## 5. Results
+## 6. Results
 
 The case analysis with the final version of the script is running; this section will be
 filled in when it finishes.
 
-## 6. Status
+## 7. Status
 
 - Lemma I, its corollaries and Lemma II are written proofs.
 - The case analysis is not complete, so nothing is claimed yet about dimension 2.

@@ -32,15 +32,26 @@ z3 cannot answer this as one question, so it is split (docs/dimension2.md has th
 Verdict per pattern: "none" (every part refuted), "found" (z3 produced an integer solution
 and checker/check.py accepted the certificate built from it), "undecided".
 
-A second pass (--hand) takes the patterns that the first pass left undecided and uses two
+A second pass (--hand) takes the patterns that the first pass left undecided and uses
 results that are proved in writing in docs/dimension2.md:
 
   Theorem 6   (both forms) no two-dimensional interpretation exists in which the matrix of t
               or the matrix of 2 has both entries off the diagonal positive and the matrix of
               f has both diagonal entries positive.  Such a pattern needs no solver.
+  Theorem 8   no two-dimensional interpretation exists in which the matrix of f has both
+              entries off the diagonal positive (left form), or has them positive together
+              with a zero on its diagonal (right form); nor, in the left form, one in which
+              the digit matrices are irreducible and the pattern makes those of f, t and 0
+              invertible.  Such a pattern needs no solver.
   Lemma III   (left form) an interpretation in which the vector of the digit 2 is zero makes
               no rule strict; so for the other patterns that vector is required to be
               non-zero, and z3 is run again.
+  Corollary 9 (right form) if the matrix of f has both entries off the diagonal positive,
+              the digit matrices satisfy one of two sets of polynomial equations; these
+              are added as a condition.
+  Corollary 10 (both forms) if the digit matrices are irreducible and those of f, t, 0 are
+              invertible, then t = f and 0 = 1 = 2 as matrices, or the traces and
+              determinants are those of the value representation; added as a condition.
   Lemma IV    (both forms) if every digit matrix is upper triangular, the first entry of the
               top row is positive and some vector has a non-zero second entry, because
               otherwise one coordinate would be a one-dimensional interpretation, which
@@ -298,7 +309,49 @@ class Encoding:
                 if triangular:
                     cons.append(self.row[1 - k] > 0)
                     cons.append(z3.Or([self.v[s][k] > 0 for s in DIGITS] + [self.end[k] > 0]))
+        if hand and form_of(rules) == 'right' and bit(pattern[0], 0, 1) and bit(pattern[0], 1, 0):
+            cons.append(self.corollary9())
+        if hand and is_full_system(rules) and up and lo:
+            cons.append(self.corollary10())
         self.constraints = cons
+
+    def trace(self, s):
+        return self.M[s][0][0] + self.M[s][1][1]
+
+    def det(self, s):
+        return self.M[s][0][0] * self.M[s][1][1] - self.M[s][0][1] * self.M[s][1][0]
+
+    def value_like(self):
+        """The traces and determinants of the digit matrices are those of the value
+        representation: f, t have eigenvalues m, 2m and 0, 1, 2 have eigenvalues n, 3n."""
+        tr, det = self.trace, self.det
+        return [2 * tr('a') * tr('a') == 9 * det('a'), tr('b') == tr('a'), det('b') == det('a'),
+                3 * tr('e') * tr('e') == 16 * det('e'), tr('f') == tr('e'), tr('g') == tr('e'),
+                det('f') == det('e'), det('g') == det('e')]
+
+    def corollary10(self):
+        """Digit matrices irreducible, both forms: the condition of Corollary 10 of
+        docs/dimension2.md."""
+        same = lambda s, t: z3.And([self.M[s][i][j] == self.M[t][i][j] for i, j in BITS])
+        return z3.Implies(z3.And(self.det('a') != 0, self.det('b') != 0, self.det('e') != 0),
+                          z3.Or(z3.And(same('a', 'b'), same('e', 'f'), same('f', 'g')),
+                                z3.And(self.value_like())))
+
+    def corollary9(self):
+        """Right form, the matrix of f irreducible: the condition of Corollary 9 of
+        docs/dimension2.md on the digit matrices."""
+        M, tr, det = self.M, self.trace, self.det
+        times = lambda X, Y: [[sum(X[i][k] * Y[k][j] for k in range(2)) for j in range(2)]
+                              for i in range(2)]
+        eps = z3.Real('eps') if self.real else z3.Int('eps')
+        AF, EA = times(M['a'], M['f']), times(M['e'], M['a'])
+        first = z3.And([det('a') > 0] + self.value_like())
+        second = z3.And(det('a') == 0, eps > 0,
+                        det('b') - tr('a') * tr('b') + tr('a') * tr('a') == 0,
+                        det('g') - eps * tr('g') + eps * eps == 0,
+                        *[AF[i][j] == eps * M['a'][i][j] for i, j in BITS],
+                        *[EA[i][j] == eps * M['a'][i][j] for i, j in BITS])
+        return z3.Or(first, second)
 
     def symbolic(self, string):
         """Matrix of a digit string with a symbol for each entry the pattern allows."""
@@ -381,6 +434,44 @@ def solve(constraints, real, timeout):
     return str(answer), (solver.model() if answer == z3.sat else None)
 
 
+def surely_invertible(m):
+    """True if every matrix with this zero pattern has a non-zero determinant: exactly one of
+    the two products 'diagonal' and 'off the diagonal' is positive."""
+    return bool(bit(m, 0, 0) and bit(m, 1, 1)) != bool(bit(m, 0, 1) and bit(m, 1, 0))
+
+
+def theorem8(pattern, form):
+    """True if Theorem 8 excludes every interpretation of the full system T in the given form
+    with this zero pattern.  Left form: the matrix of f is irreducible, or the digit matrices
+    are irreducible and the pattern makes those of f, t and 0 invertible.  Right form: the
+    matrix of f is irreducible and has a zero on its diagonal (so its determinant is
+    negative)."""
+    A = pattern[0]
+    mixes = bool(bit(A, 0, 1) and bit(A, 1, 0))
+    if form == 'left':
+        return mixes or (pattern_class(pattern) == 'irreducible'
+                         and all(surely_invertible(m) for m in pattern[:3]))
+    return mixes and not (bit(A, 0, 0) and bit(A, 1, 1))
+
+
+def by_theorem(pattern, form):
+    """The written theorem that excludes the pattern, or None."""
+    if theorem6(pattern):
+        return 'theorem 6'
+    if theorem8(pattern, form):
+        return 'theorem 8'
+    return None
+
+
+def form_of(rules):
+    """'left' or 'right' if the rules are those of the full system T in that form."""
+    key = lambda rs: sorted((''.join(r.left), ''.join(r.right), bool(r.strict)) for r in rs)
+    for form in ('left', 'right'):
+        if key(rules) == key(parse_problem(systems.COLLATZ.search_problem(form))[0]):
+            return form
+    return None
+
+
 def decide(problem_text, pattern, t1, t2, t3, t4=0, hand=False):
     """Verdict for one zero pattern: ('none' | 'found' | 'undecided', detail).
 
@@ -389,8 +480,8 @@ def decide(problem_text, pattern, t1, t2, t3, t4=0, hand=False):
     """
     rules, is_top = parse_problem(problem_text)
     assert is_top
-    if hand and theorem6(pattern):
-        return 'none', {'how': 'theorem 6'}
+    if hand and by_theorem(pattern, form_of(rules)):
+        return 'none', {'how': by_theorem(pattern, form_of(rules))}
     enc = Encoding(rules, pattern, hand=hand)
     reals = []
 
@@ -533,10 +624,12 @@ def selftest():
             report('the control still has an interpretation under Lemma III', answer == 'sat',
                    answer)
 
-    # 3. Theorems 5 and 6 on concrete matrices.  For digit matrices that satisfy their
+    # 3. Theorems 5, 6 and 8 on concrete matrices.  For digit matrices that satisfy their
     #    hypotheses and for which the weak conditions can be met, z3 (which decides these
     #    small problems) must find the weak conditions satisfiable and no strict rule possible.
     I, M, P = [[1, 0], [0, 1]], [[2, 1], [1, 1]], [[5, 3], [3, 2]]            # P = M*M
+    X, U, Z = [[0, 1], [1, 0]], [[1, 1], [1, 1]], [[0, 0], [0, 0]]
+    N, NN = [[1, 2], [1, 0]], [[3, 2], [1, 2]]                               # NN = N*N
     instances = [
         ('left', 'f, t = M; 0, 1, 2 = M*M', dict(a=M, b=M, e=P, f=P, g=P)),
         ('left', 'a conjugate of the value representation',
@@ -551,18 +644,63 @@ def selftest():
         ('left', 'f, t = identity; 0, 1, 2 = exchange of the coordinates', dict(
             a=I, b=I, e=[[0, 1], [1, 0]], f=[[0, 1], [1, 0]], g=[[0, 1], [1, 0]])),
         ('right', 'f, t = identity; 0, 1, 2 = exchange of the coordinates', dict(
-            a=I, b=I, e=[[0, 1], [1, 0]], f=[[0, 1], [1, 0]], g=[[0, 1], [1, 0]]))]
+            a=I, b=I, e=[[0, 1], [1, 0]], f=[[0, 1], [1, 0]], g=[[0, 1], [1, 0]])),
+        # Theorem 8
+        ('left', 'f, t = exchange of the coordinates; 0, 1, 2 = all entries 1', dict(
+            a=X, b=X, e=U, f=U, g=U)),
+        ('left', 'f, t = N; 0, 1, 2 = N*N', dict(a=N, b=N, e=NN, f=NN, g=NN)),
+        ('left', 'f of rank one, 1 = 9·exchange', dict(
+            a=[[1, 2], [1, 2]], b=[[2, 1], [2, 1]], e=[[9, 0], [0, 9]], f=[[0, 9], [9, 0]],
+            g=[[9, 0], [0, 9]])),
+        ('left', 'a conjugate of the value representation with t and 2 triangular', dict(
+            a=[[3, 1], [1, 3]], b=[[4, 2], [0, 2]], e=[[16, 8], [8, 16]],
+            f=[[20, 12], [4, 12]], g=[[24, 16], [0, 8]])),
+        ('left', 'f upper and t lower triangular', dict(
+            a=[[2, 1], [0, 1]], b=[[1, 0], [1, 2]], e=[[9, 6], [0, 3]], f=[[6, 3], [3, 6]],
+            g=[[3, 0], [6, 9]])),
+        ('right', 'f, t = N; 0, 1, 2 = identity', dict(a=N, b=N, e=I, f=I, g=I)),
+        ('right', 'f = exchange, t = identity; 0, 1, 2 = zero', dict(
+            a=X, b=I, e=Z, f=Z, g=Z))]
     for form, title, mats in instances:
         rules, _ = parse_problem(systems.COLLATZ.search_problem(form))
         p = tuple(sum(1 << k for k, (i, j) in enumerate(BITS) if mats[s][i][j]) for s in DIGITS)
-        covered = theorem6(p)
+        covered = by_theorem(p, form) is not None
         enc = Encoding(rules, p, real=True)
         fix = [enc.M[s][i][j] == mats[s][i][j] for s in DIGITS for i, j in BITS]
         weak, _ = solve(enc.constraints + fix + [enc.row[0] + enc.row[1] >= 1], True, 60)
         strict, _ = solve(enc.whole() + fix, True, 60)
-        report(f'Theorems 5 and 6 on an instance, {form} form ({title})',
+        report(f'Theorems 5, 6 and 8 on an instance, {form} form ({title})',
                covered and weak == 'sat' and strict == 'unsat',
                f'covered: {covered}, weak conditions: {weak}, with a strict rule: {strict}')
+
+    # 4. Corollaries 9 and 10 on concrete matrices of the kinds they allow: the weak
+    #    conditions must stay satisfiable when their conditions are added.
+    for form, title, mats in [
+            ('right', 'a conjugate of the value representation',
+             dict(a=[[6, 2], [2, 6]], b=[[8, 0], [4, 4]], e=[[4, 2], [2, 4]],
+                  f=[[5, 1], [3, 3]], g=[[6, 0], [4, 2]])),
+            ('right', 'f of rank one',
+             dict(a=[[1, 1], [2, 2]], b=[[2, 2], [1, 1]], e=I, f=X, g=I)),
+            ('left', 'a conjugate of the value representation',
+             dict(a=[[3, 1], [1, 3]], b=[[4, 2], [0, 2]], e=[[16, 8], [8, 16]],
+                  f=[[20, 12], [4, 12]], g=[[24, 16], [0, 8]])),
+            ('left', 'f, t = M; 0, 1, 2 = M*M', dict(a=M, b=M, e=P, f=P, g=P)),
+            ('left', 'f upper and t lower triangular',
+             dict(a=[[2, 1], [0, 1]], b=[[1, 0], [1, 2]], e=[[9, 6], [0, 3]],
+                  f=[[6, 3], [3, 6]], g=[[3, 0], [6, 9]]))]:
+        rules, _ = parse_problem(systems.COLLATZ.search_problem(form))
+        p = tuple(sum(1 << k for k, (i, j) in enumerate(BITS) if mats[s][i][j]) for s in DIGITS)
+        answers = []
+        for real in (False, True):
+            # only the two corollaries are added: Lemma III would rightly exclude these
+            # matrices in the left form, where Theorems 6 and 8 apply to them
+            enc = Encoding(rules, p, real=real)
+            fix = [enc.M[s][i][j] == mats[s][i][j] for s in DIGITS for i, j in BITS]
+            extra = [enc.corollary10()] + ([enc.corollary9()] if form == 'right' else [])
+            answers.append(solve(enc.constraints + fix + extra
+                                 + [enc.row[0] + enc.row[1] >= 1], real, 60)[0])
+        report(f'Corollaries 9 and 10 allow an instance, {form} form ({title})',
+               answers == ['sat', 'sat'], f'weak conditions with the corollaries: {answers}')
     return ok
 
 
@@ -636,13 +774,15 @@ def summary(args):
            '',
            'Second pass, for the patterns undecided in the first:',
            '',
-           '- "Theorem 6": the written theorem excludes every interpretation with the pattern;',
-           '  no solver is involved.',
-           '- "z3 again": z3 refuted the pattern with longer time limits, the extra split on a',
-           '  matrix entry, and (left form) the condition of Lemma III.',
+           '- "Theorem 6", "Theorem 8": the written theorem excludes every interpretation with',
+           '  the pattern; no solver is involved. A pattern that both theorems exclude is',
+           '  counted under Theorem 6.',
+           '- "z3 again": z3 refuted the pattern with the extra split on the values of matrix',
+           '  entries and with the conditions of Lemma III (left form) and Lemma IV.',
            '',
-           '| Form | Patterns | None, first pass | Theorem 6 | z3 again | Found | Undecided |',
-           '|---|---|---|---|---|---|---|']
+           '| Form | Patterns | None, first pass | Theorem 6 | Theorem 8 | z3 again | Found | '
+           'Undecided |',
+           '|---|---|---|---|---|---|---|---|']
     details = []
     for form in ('left', 'right'):
         path = os.path.join(args.out, f'{form}.jsonl')
@@ -660,23 +800,25 @@ def summary(args):
                 return 'undecided'
             if h['verdict'] == 'found':
                 return 'found'
-            return 'theorem' if h['detail']['how'] == 'theorem 6' else 'z3 again'
+            how = h['detail']['how']
+            return how if how in ('theorem 6', 'theorem 8') else 'z3 again'
 
         open_ = [r for r in rs if r['verdict'] == 'undecided']
         kinds = {tuple(r['pattern']): kind(r) for r in open_}
         ends = lambda k, c=None: sum(1 for r in open_ if kinds[tuple(r['pattern'])] == k
                                      and (c is None or r['class'] == c))
         found = count('found') + ends('found')
-        out.append(f'| {form} | {len(rs):,} | {count("none"):,} | {ends("theorem")} | '
-                   f'{ends("z3 again")} | {found} | {ends("undecided")} |')
+        out.append(f'| {form} | {len(rs):,} | {count("none"):,} | {ends("theorem 6")} | '
+                   f'{ends("theorem 8")} | {ends("z3 again")} | {found} | '
+                   f'{ends("undecided")} |')
         details += ['', f'## {form.capitalize()} form', '',
-                    '| Kind of pattern | Patterns | None, first pass | Theorem 6 | z3 again | '
-                    'Found | Undecided |',
-                    '|---|---|---|---|---|---|---|']
+                    '| Kind of pattern | Patterns | None, first pass | Theorem 6 | Theorem 8 | '
+                    'z3 again | Found | Undecided |',
+                    '|---|---|---|---|---|---|---|---|']
         for c in ('irreducible', 'triangular', 'diagonal'):
             n = sum(1 for r in rs if r['class'] == c)
-            details.append(f'| {c} | {n:,} | {count("none", c):,} | {ends("theorem", c)} | '
-                           f'{ends("z3 again", c)} | '
+            details.append(f'| {c} | {n:,} | {count("none", c):,} | {ends("theorem 6", c)} | '
+                           f'{ends("theorem 8", c)} | {ends("z3 again", c)} | '
                            f'{count("found", c) + ends("found", c)} | {ends("undecided", c)} |')
         whole = sum(1 for r in rs if r['verdict'] == 'none' and r['detail']['how'] == 'whole')
         split = [r for r in rs if r['verdict'] == 'none' and r['detail']['how'] == 'parts']
@@ -691,14 +833,18 @@ def summary(args):
         if again:
             details += ['', f'Second pass: of the {len(again)} patterns refuted by z3, '
                         f'{with_diag} needed the split on the values of matrix entries.']
-        # Theorem 6 against the first pass: the two must never contradict each other.
-        covered = [r for r in rs if theorem6(tuple(r['pattern']))]
-        details += ['',
-                    f'Theorem 6 covers {len(covered):,} patterns in all. In the first pass '
-                    f'z3 refuted {sum(1 for r in covered if r["verdict"] == "none")} of them, '
-                    f'left {sum(1 for r in covered if r["verdict"] == "undecided")} undecided '
-                    f'and found an interpretation for '
-                    f'{sum(1 for r in covered if r["verdict"] == "found")}.']
+        # The theorems against the first pass: the two must never contradict each other.
+        for name, test in (('Theorem 6', theorem6), ('Theorem 8', lambda p: theorem8(p, form))):
+            covered = [r for r in rs if test(tuple(r['pattern']))]
+            details += ['',
+                        f'{name} covers {len(covered):,} patterns in all. In the first pass '
+                        f'z3 refuted {sum(1 for r in covered if r["verdict"] == "none"):,} of '
+                        f'them, left {sum(1 for r in covered if r["verdict"] == "undecided")} '
+                        f'undecided and found an interpretation for '
+                        f'{sum(1 for r in covered if r["verdict"] == "found")}.']
+        both = sum(1 for r in rs if by_theorem(tuple(r['pattern']), form))
+        details += ['', f'Together the two theorems cover {both:,} of the {len(rs):,} '
+                    'patterns.']
         still = [r for r in open_ if kinds[tuple(r['pattern'])] == 'undecided']
         if still:
             details += ['', 'Undecided patterns (entries of each digit matrix that may be '
@@ -731,7 +877,7 @@ def main():
                     help='re-run the patterns recorded as undecided (with other time limits)')
     ap.add_argument('--hand', action='store_true',
                     help='second pass over the patterns undecided in the first, using '
-                         'Lemma III and Theorem 6 of docs/dimension2.md')
+                         'the lemmas and theorems of docs/dimension2.md')
     ap.add_argument('--out', default=os.path.join(ROOT, 'results', 'dimension2'))
     args = ap.parse_args()
     if args.selftest:
