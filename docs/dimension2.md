@@ -320,6 +320,27 @@ What Theorems 5 and 6 leave open in dimension 2 are the interpretations in which
 of f has a zero on its diagonal, and those in which neither t nor 2 mixes the coordinates
 (their matrices are both triangular or diagonal).
 
+For the case in which no digit mixes the coordinates in one direction there is a reduction
+to dimension 1.
+
+**Lemma IV (dimension 2, both forms).** Suppose every digit matrix is upper triangular.
+Then in an interpretation that makes every rule of T weakly decreasing and a strict rule
+strictly decreasing, the first entry of the row r is positive, and the second entries of the
+five digit vectors and of the vector of the other end marker are not all zero. The same
+holds with the two coordinates exchanged when every digit matrix is lower triangular.
+
+*Proof.* Because the digit matrices are upper triangular, the second coordinate of a product
+M·v is the bottom right entry of M times the second coordinate of v. So the bottom right
+entries of the digit matrices together with the second entries of the vectors satisfy every
+weak condition of a one-dimensional interpretation. If the first entry of r is zero, every
+condition for a strict rule only involves these numbers, with the second entry of r as the
+multiplier of the top marker, and they form a one-dimensional interpretation with a strict
+rule, against Theorem 4. If all the second entries of the vectors are zero, then the second
+coordinate of the vector of every string is zero, the top left entries of the matrices and
+the first entries of the vectors satisfy every condition by themselves, and with the first
+entry of r as the multiplier of the top marker they form a one-dimensional interpretation
+with a strict rule, again against Theorem 4. ∎
+
 ## 4. What the solver is asked
 
 The solver z3 cannot decide these conditions as they stand: they are polynomial inequalities
@@ -353,9 +374,12 @@ every part. If z3 reports an integer solution, it is turned into a certificate a
 
 5. **Second pass.** The cases left undecided are taken up again with the results of
    section 3. A pattern to which Theorem 6 applies is settled without the solver. For the
-   others z3 is run again with longer time limits; in the left form the condition g ≠ 0 is
-   added, which is justified by Lemma III; and a part that stays undecided is split once
-   more on a matrix entry x that the pattern makes positive, into x = 1 and x ≥ 2.
+   others z3 is run again, with three changes. The conclusions of Lemma III (left form:
+   g ≠ 0) and of Lemma IV (triangular patterns) are added as conditions. The time limits
+   are longer. And a part that stays undecided is split by the size of the diagonal
+   entries: each one that the pattern makes positive is either 1 or at least 2 (entries
+   that Lemma I shows to be equal count once); a combination that still stays undecided
+   is split once more on an entry off the diagonal.
 
 `harness/dimension2.py --selftest` checks the encoding in two ways. The representation of the
 value of a string given at the top of this note satisfies every weak condition, in both

@@ -23,9 +23,11 @@ z3 cannot answer this as one question, so it is split (docs/dimension2.md has th
      so that its smallest positive entry is 1; the strict rule decreases by at least 1).  An
      integer solution gives a real solution of this kind, so "no real solution" implies "no
      integer solution".
-  5. Optionally (--t4), a part that is still undecided is split once more on a matrix entry
-     x that the pattern makes positive: x = 1 or x >= 2.  Every such entry is tried until
-     both halves of one split are refuted.
+  5. Optionally (--t4), a part that is still undecided is split once more: each diagonal
+     entry that the pattern makes positive is either 1 or at least 2 (entries that Lemma I
+     shows to be equal are treated as one).  A combination that is still undecided is split
+     again on one entry off the diagonal, x = 1 or x >= 2, each such entry being tried
+     until both halves of one split are refuted.
 
 Verdict per pattern: "none" (every part refuted), "found" (z3 produced an integer solution
 and checker/check.py accepted the certificate built from it), "undecided".
@@ -39,6 +41,10 @@ results that are proved in writing in docs/dimension2.md:
   Lemma III   (left form) an interpretation in which the vector of the digit 2 is zero makes
               no rule strict; so for the other patterns that vector is required to be
               non-zero, and z3 is run again.
+  Lemma IV    (both forms) if every digit matrix is upper triangular, the first entry of the
+              top row is positive and some vector has a non-zero second entry, because
+              otherwise one coordinate would be a one-dimensional interpretation, which
+              Theorem 4 excludes.  The same with the coordinates exchanged.
 
 The first pass is recorded in {form}.jsonl and rests on z3 alone; the second pass is recorded
 in {form}-hand.jsonl.
@@ -155,6 +161,16 @@ def lemma3_applies(rules):
             ('cg', 'cab', True)} <= have
 
 
+def is_full_system(rules):
+    """The rules are those of T, in one of its two search forms."""
+    have = {(''.join(r.left), ''.join(r.right), bool(r.strict)) for r in rules}
+    for form in ('left', 'right'):
+        full, _ = parse_problem(systems.COLLATZ.search_problem(form))
+        if have == {(''.join(r.left), ''.join(r.right), bool(r.strict)) for r in full}:
+            return True
+    return False
+
+
 def theorem6(pattern):
     """True if Theorem 6 excludes every interpretation of the full system T, in either form,
     with this zero pattern: the matrix of t or of 2 is irreducible and the diagonal of the
@@ -261,6 +277,7 @@ class Encoding:
         # Consequences of the equalities obtained by dividing out positive factors.
         pairs, reduced = cancel(equalities, set(self.names))
         term = lambda e: self.names[e] if e in self.names else int(e)
+        self.equal = [(str(x), str(y)) for x, y in pairs]     # entries known to be equal
         for x, y in pairs:
             cons.append(self.names[x] == self.names[y])
         for g in reduced:
@@ -274,6 +291,13 @@ class Encoding:
             cons.append(total == 0)
         if hand and lemma3_applies(rules):
             cons.append(z3.Or([x > 0 for x in self.v['g']]))
+        if hand and is_full_system(rules):
+            # Lemma IV.  k is the coordinate that the digit matrices do not feed into the
+            # other one: 1 if they are all upper triangular, 0 if all lower triangular.
+            for k, triangular in ((1, not lo), (0, not up)):
+                if triangular:
+                    cons.append(self.row[1 - k] > 0)
+                    cons.append(z3.Or([self.v[s][k] > 0 for s in DIGITS] + [self.end[k] > 0]))
         self.constraints = cons
 
     def symbolic(self, string):
@@ -320,6 +344,26 @@ class Encoding:
                 cons.append(self.row[0] + self.row[1] == 1)
         cons.append(self.slack[name] >= 1)
         return cons
+
+    def diagonal(self):
+        """The diagonal entries that the pattern makes positive, one from each group of
+        entries that are known to be equal: a list of (symbol, i)."""
+        leader = {}
+
+        def find(x):
+            while leader.get(x, x) != x:
+                x = leader[x]
+            return x
+
+        for x, y in self.equal:
+            leader[find(y)] = find(x)
+        seen, out = set(), []
+        for s, m in zip(DIGITS, self.pattern):
+            for i in range(2):
+                if bit(m, i, i) and find(f'M{s}{i}{i}') not in seen:
+                    seen.add(find(f'M{s}{i}{i}'))
+                    out.append((s, i))
+        return out
 
     def certificate(self, model):
         get = lambda x: model.eval(x, model_completion=True).as_long()
@@ -384,18 +428,35 @@ def decide(problem_text, pattern, t1, t2, t3, t4=0, hand=False):
         if answer == 'sat':
             return found(model)
         if answer != 'unsat' and t4:
-            # Split on one positive matrix entry x: either x = 1 or x >= 2.
-            for s, m in zip(DIGITS, pattern):
-                for i, j in BITS:
-                    if not bit(m, i, j) or answer == 'unsat':
-                        continue
-                    halves = [both(rp, name, [extra], t4, t4) for extra in
-                              (lambda e: e.M[s][i][j] == 1, lambda e: e.M[s][i][j] >= 2)]
-                    for half in halves:
-                        if half[0] == 'sat':
-                            return found(half[1])
-                    if all(half[0] == 'unsat' for half in halves):
-                        answer, how = 'unsat', f'split on M{s}{i}{j}'
+            # Split on the diagonal: every positive diagonal entry is 1 or at least 2.
+            diagonal = enc.diagonal()
+            open_ = []
+            for combo in itertools.product((False, True), repeat=len(diagonal)):
+                fixed = [(lambda e, s=s, i=i, big=big: e.M[s][i][i] >= 2 if big
+                          else e.M[s][i][i] == 1) for (s, i), big in zip(diagonal, combo)]
+                sub, model, _ = both(rp, name, fixed, t4, t4)
+                if sub == 'sat':
+                    return found(model)
+                # A case that is still open is split once more, on one other entry.
+                for s, m in zip(DIGITS, pattern):
+                    for i, j in ((0, 1), (1, 0)):
+                        if not bit(m, i, j) or sub == 'unsat':
+                            continue
+                        halves = [both(rp, name, fixed + [extra], t4, t4) for extra in
+                                  (lambda e: e.M[s][i][j] == 1, lambda e: e.M[s][i][j] >= 2)]
+                        for half in halves:
+                            if half[0] == 'sat':
+                                return found(half[1])
+                        if all(half[0] == 'unsat' for half in halves):
+                            sub = 'unsat'
+                if sub != 'unsat':
+                    open_.append(''.join(f'{s}{i}{">" if big else "="}'
+                                         for (s, i), big in zip(diagonal, combo)))
+            how = 'split on the diagonal'
+            if open_:
+                how += ', open: ' + ' '.join(open_)
+            else:
+                answer = 'unsat'
         parts.append([rp, name, answer, how])
     verdict = 'none' if all(x[2] == 'unsat' for x in parts) else 'undecided'
     return verdict, {'how': 'parts', 'parts': parts}
@@ -620,10 +681,16 @@ def summary(args):
         whole = sum(1 for r in rs if r['verdict'] == 'none' and r['detail']['how'] == 'whole')
         split = [r for r in rs if r['verdict'] == 'none' and r['detail']['how'] == 'parts']
         with_real = sum(1 for r in split if any(x[3] == 'real' for x in r['detail']['parts']))
+        again = [second[p] for p in kinds if kinds[p] == 'z3 again']
+        with_diag = sum(1 for r in again if r['detail']['how'] == 'parts'
+                        and any(x[3].startswith('split') for x in r['detail']['parts']))
         details += ['',
                     f'First pass: {whole:,} patterns refuted as one integer problem, '
                     f'{len(split)} after splitting, of which {with_real} needed the '
                     'real-number procedure for at least one part.']
+        if again:
+            details += ['', f'Second pass: of the {len(again)} patterns refuted by z3, '
+                        f'{with_diag} needed the split on the values of matrix entries.']
         # Theorem 6 against the first pass: the two must never contradict each other.
         covered = [r for r in rs if theorem6(tuple(r['pattern']))]
         details += ['',
@@ -658,8 +725,8 @@ def main():
     ap.add_argument('--t2', type=float, default=30, help='seconds per part, integers')
     ap.add_argument('--t3', type=float, default=30, help='seconds per part, real numbers')
     ap.add_argument('--t4', type=float, default=0,
-                    help='seconds per half when an undecided part is split on a matrix entry '
-                         '(0: no splitting)')
+                    help='seconds per case when an undecided part is split on the values of '
+                         'matrix entries (0: no splitting)')
     ap.add_argument('--again', action='store_true',
                     help='re-run the patterns recorded as undecided (with other time limits)')
     ap.add_argument('--hand', action='store_true',
