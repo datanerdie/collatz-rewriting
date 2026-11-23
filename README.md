@@ -89,6 +89,8 @@ settles the smallest case only.
 | `docs/phase3-search.md` | What is searched for, why a proof would mean what is claimed, and what was found. |
 | `docs/dimension1.md` | Theorem 4 and its proof: no one-dimensional natural interpretation for the paper's system or any block-accelerated version of it. |
 | `harness/dimension1.py` | Asks the SMT solver z3 whether a one-dimensional interpretation exists with unbounded coefficients, for every Phase 3 problem. Needs `pip install z3-solver`. |
+| `docs/dimension2.md` | Dimension 2: a lemma on the carry rules that holds in every dimension (Lemma I), a simplification of the end markers (Lemma II), and a case analysis by solver. |
+| `harness/dimension2.py` | The case analysis for dimension 2: zero patterns of the digit matrices, each given to z3 with unbounded coefficients. Has a self-test. Needs `pip install z3-solver sympy`. |
 | `harness/crosscheck.py` | Repeats a sample of the "no interpretation exists" verdicts with a second SAT solver. |
 | `docs/phase2-block-acceleration.md` | Definition of the block-accelerated systems, the same equivalence for them, and what acceleration does to the negative controls. |
 | `scripts/fetch_baseline.sh` | Fetches the code published with the paper at a pinned commit into `third_party/` (not committed: it has no licence file). |
@@ -130,6 +132,14 @@ python3 harness/phase2.py
 
 ```bash
 .venv/bin/pip install z3-solver && .venv/bin/python harness/dimension1.py
+```
+
+```bash
+.venv/bin/pip install z3-solver sympy && .venv/bin/python harness/dimension2.py --selftest
+```
+
+```bash
+.venv/bin/python harness/dimension2.py --form left && .venv/bin/python harness/dimension2.py --form right --summary
 ```
 
 To check a single certificate:

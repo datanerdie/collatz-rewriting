@@ -10,9 +10,9 @@ the number obtained by appending those digits. Every carry rule is then an equal
 dimension 2 the question is no longer whether the carries can be respected, but whether any
 such representation can be combined with the end rules.
 
-This note has two parts: a lemma about the carry rules that holds in every dimension, and a
-case analysis for dimension 2 carried out by a solver. The status of each part is stated in
-section 4.
+This note has three parts: a lemma about the carry rules that holds in every dimension, a
+simplification of the end markers, and a case analysis for dimension 2 carried out by a
+solver. The status of each part is stated in section 5.
 
 ## 1. The carry rules can be undone around a circle
 
@@ -73,36 +73,93 @@ The lemma says nothing about the constant vectors of the interpretation. The cor
 statement for the affine maps would need a circular string that contains the end markers, and
 rewriting such a string in a circle is a cycle of the Collatz map.
 
-## 2. What the solver is asked
+## 2. The end markers can be simplified
 
-For the system T, in each search form, the question is the one of Phase 3 with no bound on the
-coefficients: is there a two-dimensional natural interpretation under which every rule is
-weakly decreasing and some strict rule is strictly decreasing?
+Call the end marker that stands at the front of every strict rule the *top* marker: `◁` in
+the left form, `▷` in the right form, where every string is written reversed. The checker
+compares the interpretations of the two sides of a rule entry by entry, and for a strict rule
+additionally requires the first entry of the vector to decrease.
 
-The solver z3 cannot answer this directly: the constraints are polynomial in about 40 unknown
-integers, and z3 gives up even on variants that are known to have solutions. The question is
-therefore split into cases.
+**Lemma II.** Suppose a natural matrix interpretation of dimension d makes every rule of T
+weakly decreasing and a strict rule ρ strictly decreasing, in one of the two forms. Then so
+does the interpretation obtained from it by
 
-1. **Zero patterns.** For each of the five digit matrices, fix which entries are zero. The
-   patterns are restricted to those compatible with the carry rules, which is a finite check,
-   and one of each pair related by exchanging the two coordinates is kept.
-2. **Lemma I.** In each case the equalities of Corollary 2 are added. They are consequences of
-   the other constraints, so they do not change the answer; they make it reachable.
-3. **A weaker question.** Only the first row of the matrix of the end marker that carries the
-   strict rules is kept (`◁` in the left form, `▷` in the right form). This discards
-   constraints, so "no solution" for the weaker question implies "no solution" for the
-   original.
-4. **Two decision procedures.** First z3's integer solver, with a short time limit. For the
-   cases it leaves undecided, the same constraints over the real numbers, with every entry
-   that the pattern makes positive required to be at least 1. An integer solution is a real
-   solution of this kind, so "no real solution" implies "no integer solution". For real
-   polynomial constraints z3 has a complete procedure.
+- keeping the first row of the matrix of the top marker and replacing its other rows and its
+  vector by zero, and
+- replacing the matrix of the other end marker by zero and keeping its vector.
 
-## 3. Results
+*Proof.* The digits are not changed, so the carry rules are not affected. A strict rule has
+the form "top u → top w" with strings u, w that do not contain the top marker. Write (M, v)
+for the interpretation of the top marker and (M_u, v_u), (M_w, v_w) for those of u and w. The
+rule is weakly decreasing when M·M_u ≥ M·M_w and v + M·v_u ≥ v + M·v_w, that is,
+M·v_u ≥ M·v_w, and strictly decreasing when the first entries of these vectors differ. Each
+row of M enters these conditions separately and v does not enter at all. So they remain true
+when rows other than the first are replaced by zero and v is replaced by zero, and the first
+row, which decides strictness, is unchanged. The remaining rules have the form "u other →
+w other" with digit strings u, w (w may be empty). With (N, n) for the other marker they
+require M_u·N ≥ M_w·N and v_u + M_u·n ≥ v_w + M_w·n. Replacing N by zero makes the first
+condition trivial and does not touch the second. ∎
 
-The case analysis is still running; this section will be filled in when it finishes.
+So, in dimension 2, the question is whether there are five digit interpretations (M_x, v_x),
+a row r ≥ 0 and a column n ≥ 0 with the following properties. In the left form (writing
+A, B, E, F, G for the matrices of f, t, 0, 1, 2 and a, b, e, f, g for their vectors):
 
-## 4. Status
+    the six carry rules:      M_x·M_y ≥ M_z·M_w  and  v_x + M_x·v_y ≥ v_z + M_z·v_w
+    f▷ → ▷,  t▷ → 2▷:         a + A·n ≥ n          b + B·n ≥ g + G·n
+    ◁0 → ◁t:                  r·E ≥ r·B            r·e ≥ r·b
+    ◁1 → ◁ff:                 r·F ≥ r·A·A          r·f ≥ r·(a + A·a)
+    ◁2 → ◁ft:                 r·G ≥ r·A·B          r·g ≥ r·(a + A·b)
 
-- Lemma I and its corollaries are written proofs.
+with at least one of the last three vector inequalities strict. The right form is the same
+with every product reversed, the roles of the two end markers exchanged, and the two rules
+for `▷` as the strict ones. A solution of these conditions is an interpretation, so nothing
+is lost and nothing is gained: the conditions have a solution exactly when T has a
+two-dimensional natural interpretation that removes a rule.
+
+## 3. What the solver is asked
+
+The solver z3 cannot decide these conditions as they stand: they are polynomial inequalities
+in 34 unknown integers, and z3 gives up. The question is therefore split into cases.
+
+1. **Zero patterns.** For each of the five digit matrices, fix which entries are zero. A
+   pattern is dropped if it contradicts the matrix part of a carry rule (an entry that is
+   positive on the right must be positive on the left), which is a finite check. Exchanging
+   the two coordinates turns a solution into a solution, so of two patterns related in this
+   way one is kept.
+2. **Lemma I.** In each case the equalities of Corollary 2 are added, and with them what
+   follows by dividing out factors that the pattern makes positive: from x·y = x·z and x > 0,
+   y = z. The division is done by a computer algebra system and every factorisation is
+   checked by multiplying it out. These equalities are consequences of the other conditions,
+   so they do not change the answer; they make it reachable.
+3. **The whole pattern, over the integers.** z3 is given the case as one problem.
+4. **Parts.** A case that z3 leaves undecided is split by which entries of the row r are zero
+   (three possibilities, since r = 0 cannot make a rule strict) and by which strict rule is
+   strictly decreasing. Each part is tried over the integers and then over the real numbers.
+   Over the reals, every entry that the pattern makes positive is required to be at least 1,
+   r is scaled so that its smallest positive entry is 1, and the strict rule is required to
+   decrease by at least 1. An integer solution gives a real solution of this kind: r can be
+   scaled because every condition on it is homogeneous, and afterwards all vectors can be
+   multiplied by a common factor to restore the decrease. So "no real solution" implies "no
+   integer solution". For real polynomial constraints z3 has a complete procedure; whether it
+   finishes in the time allowed is another matter.
+
+A case is *refuted* when z3 reports that no solution exists, for the whole pattern or for
+every part. If z3 reports an integer solution, it is turned into a certificate and given to
+`checker/check.py`. Otherwise the case is *undecided*.
+
+`harness/dimension2.py --selftest` checks the encoding in two ways. The representation of the
+value of a string given at the top of this note satisfies every weak condition, in both
+forms, and its transpose does not, which tests the order of every product. And for two
+smaller systems that do have a proof (T without `t▷ → 2▷` in the left form, T without the
+left-end rules in the right form) the same procedure finds an interpretation that the checker
+accepts.
+
+## 4. Results
+
+The case analysis with the final version of the script is running; this section will be
+filled in when it finishes.
+
+## 5. Status
+
+- Lemma I, its corollaries and Lemma II are written proofs.
 - The case analysis is not complete, so nothing is claimed yet about dimension 2.
