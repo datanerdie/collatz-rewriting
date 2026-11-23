@@ -39,6 +39,7 @@ idea is a variation on existing work, not a new one. It is included as a compari
 | 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | done: argument in `docs/phase2-block-acceleration.md`, checks in `results/phase2/summary.md` |
 | 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record proved / ruled out / timed out. Includes the residue-class statements modulo 8 that the paper leaves open | done: design and findings in `docs/phase3-search.md`, tables in `results/phase3/summary.md` |
 | 4 | Write up what the grid shows | short version in `docs/phase3-search.md`, section 6; no fuller write-up yet |
+| 5 | Impossibility results: prove that no interpretation of a given size exists, for coefficients of any size | dimension 1 done: Theorem 4 in `docs/dimension1.md`, solver checks in `results/dimension1/summary.md`. Dimension 2 not attempted |
 
 Controls in Phase 3: the paper's solvable variants must stay solvable in the new encodings
 (otherwise the encoding is worse and that branch stops), and the 3n−1 and 5n+1 systems, which
@@ -63,6 +64,12 @@ Phase 3 found no proof of anything that was not already known.
 The range searched is small: dimensions 1 and 2 completely, dimension 3 only for small
 coefficients. Details and limits are in `docs/phase3-search.md`, section 6.
 
+One of these negative results is now a theorem and not only a solver verdict. For the paper's
+system and for every block size, no one-dimensional natural interpretation exists, whatever
+the size of its coefficients (`docs/dimension1.md`, Theorem 4). The paper names the general
+question, whether any matrix interpretation can prove its system terminating, as open; this
+settles the smallest case only.
+
 ## Layout
 
 | Path | What it is |
@@ -80,6 +87,8 @@ coefficients. Details and limits are in `docs/phase3-search.md`, section 6.
 | `docs/phase1-shifted-system.md` | Definition of the shifted systems S and S2 and the proof that each terminates exactly when the Collatz conjecture holds. |
 | `harness/phase3.py` | The search: builds every problem, runs the prover over a grid with time limits, verifies every proof, writes the summary. Resumable. |
 | `docs/phase3-search.md` | What is searched for, why a proof would mean what is claimed, and what was found. |
+| `docs/dimension1.md` | Theorem 4 and its proof: no one-dimensional natural interpretation for the paper's system or any block-accelerated version of it. |
+| `harness/dimension1.py` | Asks the SMT solver z3 whether a one-dimensional interpretation exists with unbounded coefficients, for every Phase 3 problem. Needs `pip install z3-solver`. |
 | `harness/crosscheck.py` | Repeats a sample of the "no interpretation exists" verdicts with a second SAT solver. |
 | `docs/phase2-block-acceleration.md` | Definition of the block-accelerated systems, the same equivalence for them, and what acceleration does to the negative controls. |
 | `scripts/fetch_baseline.sh` | Fetches the code published with the paper at a pinned commit into `third_party/` (not committed: it has no licence file). |
@@ -117,6 +126,10 @@ python3 harness/phase2.py
 
 ```bash
 .venv/bin/python harness/crosscheck.py
+```
+
+```bash
+.venv/bin/pip install z3-solver && .venv/bin/python harness/dimension1.py
 ```
 
 To check a single certificate:
