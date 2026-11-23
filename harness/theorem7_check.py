@@ -14,15 +14,27 @@ rules for the left end marker, there is a positive row that is a left eigenvecto
 G with a larger eigenvalue for G, or all five matrices are permutation matrices and r has two
 equal entries.
 
+With --z3 it also tests Theorem 8 itself on these examples: for every solution in which F
+or G is not zero, the five matrices (in the left form) and their transposes (in the right
+form) are fixed as the digit matrices of the system T, and z3 is asked whether the remaining
+unknowns (the vectors and the row of the top marker) can make every rule weakly decreasing,
+and whether they can also make a strict rule strictly decreasing.  The second must never be
+possible.  Needs z3-solver and sympy.
+
 A check, not a proof: it covers the entries 0..bound only, and it uses floating point for
 the eigenvectors.
 
-Usage:  theorem7_check.py [--bound 3]
+Usage:  theorem7_check.py [--bound 3] [--z3]
 """
 import argparse
+import os
 import sys
 
 import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(os.path.dirname(HERE), 'checker'))
 
 TOL = 1e-7
 
@@ -120,9 +132,55 @@ def solutions(bound):
                         yield A, B, E, F, G
 
 
+def with_z3(bound):
+    """Theorem 8 on every solution with F or G non-zero; returns the number of failures."""
+    import dimension2 as d
+    import systems
+    from check import parse_problem
+    rules = {form: parse_problem(systems.COLLATZ.search_problem(form))[0]
+             for form in ('left', 'right')}
+    encodings, counts, failures, total = {}, {}, 0, 0
+    for solution in solutions(bound):
+        if not solution[3].any() and not solution[4].any():
+            continue
+        total += 1
+        for form in ('left', 'right'):
+            mats = dict(zip(d.DIGITS, [M if form == 'left' else M.T for M in solution]))
+            p = tuple(sum(1 << k for k, (i, j) in enumerate(d.BITS) if mats[s][i][j])
+                      for s in d.DIGITS)
+            if (form, p) not in encodings:
+                encodings[form, p] = d.Encoding(rules[form], p, real=True)
+            enc = encodings[form, p]
+            fix = [enc.M[s][i][j] == int(mats[s][i][j]) for s in d.DIGITS for i, j in d.BITS]
+            weak, _ = d.solve(enc.constraints + fix + [enc.row[0] + enc.row[1] >= 1], True, 60)
+            strict, _ = d.solve(enc.whole() + fix, True, 60)
+            covered = d.theorem8(p)
+            counts[form, weak, strict] = counts.get((form, weak, strict), 0) + 1
+            if strict != 'unsat' or not covered:
+                failures += 1
+                print('FAILURE', form, weak, strict, covered,
+                      {s: mats[s].tolist() for s in d.DIGITS})
+    print()
+    print(f'Theorem 8 on the {total:,} solutions in which F or G is not zero, with z3 '
+          + z3_version() + ':')
+    print()
+    print('| Form | Weak conditions | With a strict rule | Solutions |')
+    print('|---|---|---|---|')
+    names = {'sat': 'can be met', 'unsat': 'cannot be met', 'unknown': 'undecided'}
+    for (form, weak, strict), n in sorted(counts.items()):
+        print(f'| {form} | {names[weak]} | {names[strict]} | {n:,} |')
+    return failures
+
+
+def z3_version():
+    import z3
+    return z3.get_version_string()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--bound', type=int, default=3)
+    ap.add_argument('--z3', action='store_true')
     args = ap.parse_args()
     counts, failures = {}, []
 
@@ -171,7 +229,8 @@ def main():
     print('Failures:', len(failures))
     for name, solution in failures[:10]:
         print(' ', name, [M.tolist() for M in solution])
-    return 1 if failures else 0
+    more = with_z3(args.bound) if args.z3 else 0
+    return 1 if failures or more else 0
 
 
 if __name__ == '__main__':

@@ -38,17 +38,13 @@ results that are proved in writing in docs/dimension2.md:
   Theorem 6   (both forms) no two-dimensional interpretation exists in which the matrix of t
               or the matrix of 2 has both entries off the diagonal positive and the matrix of
               f has both diagonal entries positive.  Such a pattern needs no solver.
-  Theorem 8   no two-dimensional interpretation exists in which the matrix of f has both
-              entries off the diagonal positive (left form), or has them positive together
-              with a zero on its diagonal (right form); nor, in the left form, one in which
-              the digit matrices are irreducible and the pattern makes those of f, t and 0
+  Theorem 8   (both forms) no two-dimensional interpretation exists in which the matrix of
+              f has both entries off the diagonal positive, nor one in which the digit
+              matrices are irreducible and the pattern makes those of f, t and 0
               invertible.  Such a pattern needs no solver.
   Lemma III   (left form) an interpretation in which the vector of the digit 2 is zero makes
               no rule strict; so for the other patterns that vector is required to be
               non-zero, and z3 is run again.
-  Corollary 9 (right form) if the matrix of f has both entries off the diagonal positive,
-              the digit matrices satisfy one of two sets of polynomial equations; these
-              are added as a condition.
   Corollary 10 (both forms) if the digit matrices are irreducible and those of f, t, 0 are
               invertible, then t = f and 0 = 1 = 2 as matrices, or the traces and
               determinants are those of the value representation; added as a condition.
@@ -309,8 +305,6 @@ class Encoding:
                 if triangular:
                     cons.append(self.row[1 - k] > 0)
                     cons.append(z3.Or([self.v[s][k] > 0 for s in DIGITS] + [self.end[k] > 0]))
-        if hand and form_of(rules) == 'right' and bit(pattern[0], 0, 1) and bit(pattern[0], 1, 0):
-            cons.append(self.corollary9())
         if hand and is_full_system(rules) and up and lo:
             cons.append(self.corollary10())
         self.constraints = cons
@@ -336,22 +330,6 @@ class Encoding:
         return z3.Implies(z3.And(self.det('a') != 0, self.det('b') != 0, self.det('e') != 0),
                           z3.Or(z3.And(same('a', 'b'), same('e', 'f'), same('f', 'g')),
                                 z3.And(self.value_like())))
-
-    def corollary9(self):
-        """Right form, the matrix of f irreducible: the condition of Corollary 9 of
-        docs/dimension2.md on the digit matrices."""
-        M, tr, det = self.M, self.trace, self.det
-        times = lambda X, Y: [[sum(X[i][k] * Y[k][j] for k in range(2)) for j in range(2)]
-                              for i in range(2)]
-        eps = z3.Real('eps') if self.real else z3.Int('eps')
-        AF, EA = times(M['a'], M['f']), times(M['e'], M['a'])
-        first = z3.And([det('a') > 0] + self.value_like())
-        second = z3.And(det('a') == 0, eps > 0,
-                        det('b') - tr('a') * tr('b') + tr('a') * tr('a') == 0,
-                        det('g') - eps * tr('g') + eps * eps == 0,
-                        *[AF[i][j] == eps * M['a'][i][j] for i, j in BITS],
-                        *[EA[i][j] == eps * M['a'][i][j] for i, j in BITS])
-        return z3.Or(first, second)
 
     def symbolic(self, string):
         """Matrix of a digit string with a symbol for each entry the pattern allows."""
@@ -440,18 +418,14 @@ def surely_invertible(m):
     return bool(bit(m, 0, 0) and bit(m, 1, 1)) != bool(bit(m, 0, 1) and bit(m, 1, 0))
 
 
-def theorem8(pattern, form):
-    """True if Theorem 8 excludes every interpretation of the full system T in the given form
-    with this zero pattern.  Left form: the matrix of f is irreducible, or the digit matrices
-    are irreducible and the pattern makes those of f, t and 0 invertible.  Right form: the
-    matrix of f is irreducible and has a zero on its diagonal (so its determinant is
-    negative)."""
+def theorem8(pattern, form=None):
+    """True if Theorem 8 excludes every interpretation of the full system T, in either form,
+    with this zero pattern: the matrix of f is irreducible, or the digit matrices are
+    irreducible and the pattern makes those of f, t and 0 invertible."""
     A = pattern[0]
-    mixes = bool(bit(A, 0, 1) and bit(A, 1, 0))
-    if form == 'left':
-        return mixes or (pattern_class(pattern) == 'irreducible'
-                         and all(surely_invertible(m) for m in pattern[:3]))
-    return mixes and not (bit(A, 0, 0) and bit(A, 1, 1))
+    return bool(bit(A, 0, 1) and bit(A, 1, 0)) or (
+        pattern_class(pattern) == 'irreducible'
+        and all(surely_invertible(m) for m in pattern[:3]))
 
 
 def by_theorem(pattern, form):
@@ -659,6 +633,16 @@ def selftest():
             a=[[2, 1], [0, 1]], b=[[1, 0], [1, 2]], e=[[9, 6], [0, 3]], f=[[6, 3], [3, 6]],
             g=[[3, 0], [6, 9]])),
         ('right', 'f, t = N; 0, 1, 2 = identity', dict(a=N, b=N, e=I, f=I, g=I)),
+        ('right', 'a conjugate of the value representation with t and 2 triangular', dict(
+            a=[[6, 2], [2, 6]], b=[[8, 0], [4, 4]], e=[[4, 2], [2, 4]], f=[[5, 1], [3, 3]],
+            g=[[6, 0], [4, 2]])),
+        ('right', 'f of rank one, 1 = exchange', dict(
+            a=[[1, 1], [2, 2]], b=[[2, 2], [1, 1]], e=I, f=X, g=I)),
+        ('right', 'f of rank one, 1 = 2·identity', dict(
+            a=U, b=[[2, 0], [2, 0]], e=U, f=[[2, 0], [0, 2]], g=[[2, 0], [2, 0]])),
+        ('right', 'f upper and t lower triangular', dict(
+            a=[[4, 0], [2, 2]], b=[[2, 2], [0, 4]], e=[[3, 0], [2, 1]], f=[[2, 1], [1, 2]],
+            g=[[1, 2], [0, 3]])),
         ('right', 'f = exchange, t = identity; 0, 1, 2 = zero', dict(
             a=X, b=I, e=Z, f=Z, g=Z))]
     for form, title, mats in instances:
@@ -673,8 +657,8 @@ def selftest():
                covered and weak == 'sat' and strict == 'unsat',
                f'covered: {covered}, weak conditions: {weak}, with a strict rule: {strict}')
 
-    # 4. Corollaries 9 and 10 on concrete matrices of the kinds they allow: the weak
-    #    conditions must stay satisfiable when their conditions are added.
+    # 4. Corollary 10 on concrete matrices of the two kinds it allows: the weak conditions
+    #    must stay satisfiable when its condition is added.
     for form, title, mats in [
             ('right', 'a conjugate of the value representation',
              dict(a=[[6, 2], [2, 6]], b=[[8, 0], [4, 4]], e=[[4, 2], [2, 4]],
@@ -692,15 +676,14 @@ def selftest():
         p = tuple(sum(1 << k for k, (i, j) in enumerate(BITS) if mats[s][i][j]) for s in DIGITS)
         answers = []
         for real in (False, True):
-            # only the two corollaries are added: Lemma III would rightly exclude these
-            # matrices in the left form, where Theorems 6 and 8 apply to them
+            # only the corollary is added: Lemma III would rightly exclude these matrices in
+            # the left form, where Theorems 6 and 8 apply to them
             enc = Encoding(rules, p, real=real)
             fix = [enc.M[s][i][j] == mats[s][i][j] for s in DIGITS for i, j in BITS]
-            extra = [enc.corollary10()] + ([enc.corollary9()] if form == 'right' else [])
-            answers.append(solve(enc.constraints + fix + extra
+            answers.append(solve(enc.constraints + fix + [enc.corollary10()]
                                  + [enc.row[0] + enc.row[1] >= 1], real, 60)[0])
-        report(f'Corollaries 9 and 10 allow an instance, {form} form ({title})',
-               answers == ['sat', 'sat'], f'weak conditions with the corollaries: {answers}')
+        report(f'Corollary 10 allows an instance, {form} form ({title})',
+               answers == ['sat', 'sat'], f'weak conditions with the corollary: {answers}')
     return ok
 
 

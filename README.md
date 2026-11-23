@@ -39,7 +39,7 @@ idea is a variation on existing work, not a new one. It is included as a compari
 | 2 | Generate block-accelerated systems for block sizes 2–6 and test them against direct iteration | done: argument in `docs/phase2-block-acceleration.md`, checks in `results/phase2/summary.md` |
 | 3 | Search: original, shifted, accelerated and combined systems, across interpretation type, dimension and coefficient range; record proved / ruled out / timed out. Includes the residue-class statements modulo 8 that the paper leaves open | done: design and findings in `docs/phase3-search.md`, tables in `results/phase3/summary.md` |
 | 4 | Write up what the grid shows | short version in `docs/phase3-search.md`, section 6; no fuller write-up yet |
-| 5 | Impossibility results: prove that no interpretation of a given size exists, for coefficients of any size | dimension 1 done: Theorem 4 in `docs/dimension1.md`, solver checks in `results/dimension1/summary.md`. Dimension 2 not attempted |
+| 5 | Impossibility results: prove that no interpretation of a given size exists, for coefficients of any size | dimension 1 done: Theorem 4 in `docs/dimension1.md`, solver checks in `results/dimension1/summary.md`. Dimension 2 partly done: Theorems 5 to 8 in `docs/dimension2.md` exclude every interpretation in which one of the digits f, t, 2 mixes the two coordinates, with a side condition in some cases; the rest is a case analysis by solver that is not complete, see `results/dimension2/summary.md` |
 
 Controls in Phase 3: the paper's solvable variants must stay solvable in the new encodings
 (otherwise the encoding is worse and that branch stops), and the 3n−1 and 5n+1 systems, which
@@ -89,8 +89,9 @@ settles the smallest case only.
 | `docs/phase3-search.md` | What is searched for, why a proof would mean what is claimed, and what was found. |
 | `docs/dimension1.md` | Theorem 4 and its proof: no one-dimensional natural interpretation for the paper's system or any block-accelerated version of it. |
 | `harness/dimension1.py` | Asks the SMT solver z3 whether a one-dimensional interpretation exists with unbounded coefficients, for every Phase 3 problem. Needs `pip install z3-solver`. |
-| `docs/dimension2.md` | Dimension 2: a lemma on the carry rules that holds in every dimension (Lemma I), a simplification of the end markers (Lemma II), and a case analysis by solver. |
-| `harness/dimension2.py` | The case analysis for dimension 2: zero patterns of the digit matrices, each given to z3 with unbounded coefficients. Has a self-test. Needs `pip install z3-solver sympy`. |
+| `docs/dimension2.md` | Dimension 2: a lemma on the carry rules that holds in every dimension (Lemma I), a simplification of the end markers (Lemma II), written theorems that exclude families of interpretations (Theorems 5 to 8), and a case analysis by solver for the rest. Section 7 states what is proved, what rests on the solver and what is undecided. |
+| `harness/dimension2.py` | The case analysis for dimension 2: zero patterns of the digit matrices, each given to z3 with unbounded coefficients; a second pass uses the written results. Has a self-test. Needs `pip install z3-solver sympy`. |
+| `harness/theorem7_check.py` | Checks Theorems 7 and 8 of `docs/dimension2.md` on every example with small entries. Needs `pip install numpy`, and z3 for the option `--z3`. |
 | `harness/crosscheck.py` | Repeats a sample of the "no interpretation exists" verdicts with a second SAT solver. |
 | `docs/phase2-block-acceleration.md` | Definition of the block-accelerated systems, the same equivalence for them, and what acceleration does to the negative controls. |
 | `scripts/fetch_baseline.sh` | Fetches the code published with the paper at a pinned commit into `third_party/` (not committed: it has no licence file). |
@@ -139,7 +140,15 @@ python3 harness/phase2.py
 ```
 
 ```bash
-.venv/bin/python harness/dimension2.py --form left && .venv/bin/python harness/dimension2.py --form right --summary
+.venv/bin/python harness/dimension2.py --form left && .venv/bin/python harness/dimension2.py --form right
+```
+
+```bash
+.venv/bin/python harness/dimension2.py --form left --hand --t2 10 --t3 20 --t4 5 && .venv/bin/python harness/dimension2.py --form right --hand --t2 10 --t3 20 --t4 5 --summary
+```
+
+```bash
+.venv/bin/pip install numpy && .venv/bin/python harness/theorem7_check.py --z3
 ```
 
 To check a single certificate:

@@ -14,8 +14,8 @@ This note has five parts: a lemma about the carry rules that holds in every dime
 simplification of the end markers, two theorems that exclude the interpretations in which
 the digit t or the digit 2 mixes the coordinates (one in every dimension, a stronger one in
 dimension 2), a description of the digit matrices when the digit f mixes the coordinates,
-with a theorem that excludes those interpretations in the left form and part of them in the
-right form, and a case analysis for the rest of dimension 2 carried out by a solver. The
+with a theorem that excludes those interpretations, and a case analysis for the rest of
+dimension 2 carried out by a solver. The
 status of each part is stated in section 7.
 
 ## 1. The carry rules can be undone around a circle
@@ -452,8 +452,9 @@ B·F = α·(G·x)·y/(y·x), by F on the right: ε²·B = α·(G·x)·ỹ/(y·x)
 
 `harness/theorem7_check.py` lists every solution of (1) to (6) with entries up to a bound
 and tests the four cases on each; with entries up to 3 there are 39,396 solutions and each
-is in one of the cases (`results/dimension2/theorem7-check.md`). This is a check of the
-statement on small examples, not part of the proof.
+is in one of the cases (`results/dimension2/theorem7-check.md`). With the option `--z3` it
+also tests Theorem 8 below on the same solutions. These are checks of the statements on
+small examples, not part of the proofs.
 
 One part of the proof does not need a matrix of f that mixes the coordinates.
 
@@ -476,16 +477,15 @@ d·B = 2·μ·d. In the same way N·E = 3·E·N gives E·c = ν·c and d·E = 3�
 ν ≠ 0, and then F = A⁻¹·E·B and G = A⁻¹·F·A satisfy F·c = ν·c, d·F = 3·ν·d, G·c = ν·c and
 d·G = 3·ν·d. For the reversed equalities, apply this to the transposed matrices. ∎
 
-**Theorem 8 (dimension 2).** There is no two-dimensional natural matrix interpretation that
-makes every rule of T weakly decreasing and a strict rule strictly decreasing, and in which
+**Theorem 8 (dimension 2).** In neither form is there a two-dimensional natural matrix
+interpretation that makes every rule of T weakly decreasing and a strict rule strictly
+decreasing, and in which
 
-- *(left form)* both entries off the diagonal of the matrix of f are positive; or
-- *(left form)* the digit matrices are irreducible in the sense of Corollary 1 and the
-  matrices of f, t and 0 are invertible; or
-- *(right form)* both entries off the diagonal of the matrix of f are positive and its
-  determinant is negative; in particular, if it also has a zero on its diagonal.
+- both entries off the diagonal of the matrix of f are positive; or
+- the digit matrices are irreducible in the sense of Corollary 1 and the matrices of f, t
+  and 0 are invertible.
 
-The proof uses two steps. The first is taken from the proof of Theorem 5.
+The proof for the left form uses two steps. The first is taken from the proof of Theorem 5.
 
 - (L) *In the left form, if a positive row ỹ satisfies ỹ·B = β·ỹ and ỹ·G = γ·ỹ with γ > β
   and γ ≥ 1, no rule is strict.* This is the part "g = 0" of the proof of Theorem 5, which
@@ -531,9 +531,9 @@ and x₀ are eigenvectors of A for different eigenvalues. So ε > α ≥ 2, and 
 ỹ = y, β = α, γ = ε. ∎
 
 *Proof, left form, first statement.* The digit matrices are irreducible, so (1) to (6) hold
-by Corollary 1 and Theorem 7 applies. The row r is not zero, so r·x > 0. The matrix part of ◁1 → ◁ff is
-r·F ≥ r·A·A; multiplied by x it gives r·F·x ≥ α²·(r·x) > 0. So F ≠ 0, which excludes (S0),
-and whenever F·x = ε·x, ε ≥ α².
+by Corollary 1 and Theorem 7 applies. The row r is not zero, so r·x > 0. The matrix part of
+◁1 → ◁ff is r·F ≥ r·A·A; multiplied by x it gives r·F·x ≥ α²·(r·x) > 0. So F ≠ 0, which
+excludes (S0), and whenever F·x = ε·x, ε ≥ α².
 
 *(S1).* If α > 1, then ε ≥ α² > α, and (L) applies with ỹ = y, β = α, γ = ε. If α = 1,
 then A = J, x and y are (1, 1), and ε ≥ 1. If ε > 1, (L) applies again. If ε = 1, every
@@ -557,62 +557,160 @@ multiple of I, then E = u·I + w·A is triangular in the same direction, or diag
 the digit matrices are not irreducible. So A = B = s·I with an integer s ≥ 1, and
 E = F = G has both entries off the diagonal positive. Theorem 6 excludes this. ∎
 
-*Proof, right form.* In the right form the carry equalities hold with every product
-reversed, so the transposed matrices satisfy (1) to (6) and Theorem 7 applies to them. The
-determinant is negative, so (S2) and (S3) are excluded. What remains is F = G = 0, or (S1),
-which reads the same for the matrices themselves: a positive column x and a positive row y
-are eigenvectors of all five, with eigenvalues α, α, ε, ε, ε. Write λ(v) = y·v.
+In the right form the carry equalities hold with every product reversed:
 
-*F = G = 0.* The rules 2f → f1 and 1t → f2 give g ≥ a + A·f and f ≥ a + A·g, so
-g ≥ a + A·A·g and λ(g) ≥ λ(a) + α²·λ(g). As α ≥ 1, λ(a) = 0 and a = 0. The rule 2t → t2
-gives g ≥ b + B·g ≥ b. So r·a = 0 and r·b ≤ r·g: no rule is strict.
+    (1′) E·A = A·E    (2′) F·A = B·E    (3′) G·A = A·F
+    (4′) E·B = B·F    (5′) F·B = A·G    (6′) G·B = B·G
 
-*(S1).* The matrix part of ▷t → ▷2, multiplied by x, gives α·(r·x) ≥ ε·(r·x), so α ≥ ε.
-Multiplying the vector parts of 2t → t2 and 2◁ → tf◁ by y,
+So the transposed matrices satisfy (1) to (6), and Theorem 7 and Corollary 10 apply to
+them. What they provide for the matrices themselves is obtained by exchanging rows with
+columns. Write λ(v) = y·v when a positive row y is given. Three steps are used.
 
-    (ε − 1)·λ(b) ≥ (α − 1)·λ(g)        λ(g) ≥ λ(b) + Δ,   Δ = α·λ(a) + (α² − ε)·λ(m) ≥ 0,
+- (Z) *In the right form, if F = G = 0 and both entries off the diagonal of A are positive,
+  no rule is strict.* The rules 2f → f1 and 1t → f2 give g ≥ a + A·f and f ≥ a + A·g, so
+  g ≥ a + A·A·g and, with the positive row y of A, λ(g) ≥ λ(a) + α²·λ(g). As α ≥ 1,
+  λ(a) = 0 and a = 0. The rule 2t → t2 gives g ≥ b + B·g ≥ b. So r·a = 0 and r·b ≤ r·g.
+- (C) *In the right form, if a positive row y is a left eigenvector of the five digit
+  matrices with eigenvalues α, α, ε, ε, ε for A, B, E, F, G, where α > 1, and a positive
+  column x̂ satisfies B·x̂ = α·x̂ and G·x̂ = ε·x̂, no rule is strict.* The matrix part of
+  ▷t → ▷2, multiplied by x̂, gives α·(r·x̂) ≥ ε·(r·x̂), so α ≥ ε. Multiplying the vector
+  parts of 2t → t2 and 2◁ → tf◁ by y,
 
-so 0 ≥ (α − ε)·λ(b) + (α − 1)·Δ. If α > 1, then Δ = 0, so a = 0 and, because α² > α ≥ ε,
-m = 0; the rule 2◁ → tf◁ then reads g ≥ b, and no rule is strict. If α = 1, then A = J, x
-and y are (1, 1), and ε, a row sum of E, is 0 or 1. If ε = 0, then E = F = G = 0, the case
-already treated. If ε = 1, every digit matrix is I or J; ▷f → ▷ requires r·J ≥ r, so r is a
-multiple of y, and (P) gives a contradiction. ∎
+      (ε − 1)·λ(b) ≥ (α − 1)·λ(g)        λ(g) ≥ λ(b) + Δ,   Δ = α·λ(a) + (α² − ε)·λ(m) ≥ 0,
 
-In the right form the cases (S2) and (S3) are not settled by this argument: after
-transposing they provide a common *right* eigenvector, while the vector conditions are
-tested with left eigenvectors. Theorem 6 covers them when t or 2 also mixes the coordinates.
-The two parts of the proof above that do not use the determinant still say something:
+  so 0 ≥ (α − ε)·λ(b) + (α − 1)·Δ and Δ = 0. Hence a = 0 and, because α² > α ≥ ε, m = 0.
+  The rule 2◁ → tf◁ then reads g ≥ b. So r·a = 0 and r·b ≤ r·g.
+- (V′) *In the right form, if the digit matrices are irreducible, A, B and E are invertible
+  and B ≠ A, no rule is strict.*
 
-**Corollary 9 (right form, dimension 2).** In a two-dimensional natural matrix
-interpretation, in the right form, that makes every rule of T weakly decreasing and a
-strict rule strictly decreasing, and in which both entries off the diagonal of the matrix
-of f are positive, the digit matrices satisfy one of the following.
+*Proof of (V′).* Corollary 10 and its proof, applied to the transposed matrices, give a
+column x, a row w with w·x = 0, and real numbers μ ≠ 0, ν ≠ 0 such that w·A = μ·w,
+B = A + 2·μ·x·w, x is a right eigenvector of A and B with eigenvalue 2·μ and of E, F, G
+with eigenvalue 3·ν, and w is a left eigenvector of A and B with eigenvalue μ and of E, F,
+G with eigenvalue ν. As in the proof of (V): μ is a positive integer; with α = 2·μ ≥ 2, x
+can be taken positive; and ε = 3·ν > 0. Moreover the trace 4·ν and the determinant 3·ν² of
+E are integers, so ν is an integer (if 4·ν = k, then 3·k²/16 is an integer and 4 divides
+k), and ε ≥ 3.
 
-- det A > 0; B has the same trace and the same determinant as A, and
-  2·(trace A)² = 9·det A; E, F, G have the same trace and the same determinant, and
-  3·(trace E)² = 16·det E.
-- det A = 0; there is an integer ε > 0 with E·A = ε·A and A·F = ε·A; the trace of A is an
-  eigenvalue of B, and ε is an eigenvalue of G.
+Let y₀ be a left eigenvector of A for α with non-negative entries, w′ = (y₀·x)·w and
+y_t = y₀ + t·w′. Then y_t·x = y₀·x > 0, y_t·A = α·y_{t/2} and y_t·B = α·y_{t/2+1}. So
+y₂·B = α·y₂, and as in the proof of (V) the entries of y₂, and those of y₁ = (y₀ + y₂)/2,
+are non-negative, and y₂·G = ε·y₂ by (6′). No two of the rows y₀, y₁, y₂ are multiples of
+each other, because w′ ≠ 0 is a left eigenvector of A for another eigenvalue than y₀. Hence
+a column v with non-negative entries for which two of the numbers y₀·v, y₁·v, y₂·v are
+zero is zero: at a coordinate where v is positive both rows would vanish, and they would be
+multiples of the same unit row. Write Λ_t(v) = y_t·v.
 
-*Proof.* The transposed matrices satisfy the hypotheses of Theorem 7. The cases (S0) and
-(S1) were excluded in the proof of Theorem 8 without using the determinant, so (S2) or (S3)
-holds for the transposed matrices. Trace, determinant and eigenvalues do not change under
-transposition. In (S2) the eigenvalues of A and B are α and α/2, with sum 3·α/2 and product
-α²/2; those of E, F, G are ε and ε/3, with sum 4·ε/3 and product ε²/3. In (S3), A = α·Π
-with α the trace of A; transposing F·x = ε·x gives y·F = ε·y for the positive row y of A,
-so A·F = ε·A; E·A = ε·A because E·x = ε·x; α is an eigenvalue of B and ε one of G. Finally
-ε is a rational number, because E·A = ε·A with integer matrices and A ≠ 0, and an
-eigenvalue of an integer matrix, hence an integer. ∎
+The matrix part of ▷t → ▷2, multiplied by x, gives α ≥ ε. Since α is even and ε ≥ 3,
+α ≥ 4, so α²/2 > ε. Multiplying the vector parts of 2t → t2 and 2◁ → tf◁ by y₂, and using
+y₂·B·A = α²·y₁,
 
-What Theorems 5, 6 and 8 leave open in dimension 2:
+    (ε − 1)·Λ₂(b) ≥ (α − 1)·Λ₂(g)
+    Λ₂(g) + ε·Λ₂(m) ≥ Λ₂(b) + α·Λ₂(a) + α²·Λ₁(m).
 
-- in the left form, the interpretations in which the matrix of f is triangular or diagonal,
-  Theorem 6 does not apply (f has a zero on its diagonal, or neither t nor 2 mixes the
-  coordinates), and the second statement of Theorem 8 does not apply (all digit matrices
-  are triangular in the same direction, or one of the matrices of f, t, 0 is singular);
-- in the right form, those in which the matrix of f is triangular or diagonal and
-  Theorem 6 does not apply; and those in which f mixes the coordinates, the determinant of
-  its matrix is not negative, and neither t nor 2 mixes the coordinates.
+With Λ₁(m) = (Λ₀(m) + Λ₂(m))/2 the second says Λ₂(g) ≥ Λ₂(b) + Δ for
+
+    Δ = α·Λ₂(a) + (α²/2)·Λ₀(m) + (α²/2 − ε)·Λ₂(m) ≥ 0,
+
+and then 0 ≥ (α − ε)·Λ₂(b) + (α − 1)·Δ. So Δ = 0: Λ₂(a) = 0, Λ₀(m) = Λ₂(m) = 0 and hence
+m = 0; and (α − ε)·Λ₂(b) = 0. With m = 0 the rule 2◁ → tf◁ reads g ≥ b + B·a ≥ b, so
+▷t → ▷2 is not strict. It remains to show r·a = 0.
+
+*If α > ε.* Then Λ₂(b) = 0, and the first inequality gives Λ₂(g) = 0. The rule 2f → f1,
+g + G·a ≥ a + A·f, multiplied by y₂, gives Λ₂(g) + ε·Λ₂(a) ≥ Λ₂(a) + α·Λ₁(f), so
+Λ₁(f) = 0. The rule 1◁ → ff◁ with m = 0 gives f ≥ a, so Λ₁(a) = 0. With Λ₂(a) = 0, a = 0.
+
+*If α = ε.* The rows y₂ and w are left eigenvectors of B for different eigenvalues, so
+r = σ·y₂ + σ′·w for two numbers σ, σ′. Then r·B − r·G = σ′·(α/2 − ε/3)·w = σ′·(α/6)·w, and
+the matrix part of ▷t → ▷2 says that this row is non-negative. But w ≠ 0 and w·x = 0 with
+x positive, so w has a positive and a negative entry. Hence σ′ = 0, r = σ·y₂, and
+r·a = σ·Λ₂(a) = 0. ∎
+
+*Proof, right form, first statement.* Theorem 7 applies to the transposed matrices. Let x
+and y be the positive column and row of A.
+
+*(S0).* This is (Z).
+
+*(S1)* reads the same for the matrices themselves: x and y are eigenvectors of all five,
+with eigenvalues α, α, ε, ε, ε. If α > 1, (C) applies with x̂ = x. If α = 1, then A = J, x
+and y are (1, 1), α ≥ ε as in (C), and ε, a row sum of E, is 0 or 1. If ε = 0, then
+E = F = G = 0 and (Z) applies. If ε = 1, every digit matrix is I or J; ▷f → ▷ requires
+r·J ≥ r, so r is a multiple of y, and (P) gives a contradiction.
+
+*(S2).* A, B and E are invertible. If B ≠ A, (V′) applies. If B = A, then E = F = G by
+Corollary 10, and this is the situation of (S1).
+
+*(S3).* Then det A = 0, α ≥ 2, and with x scaled so that y·x = 1, A·v = α·λ(v)·x for every
+column v. Transposing the statement of (S3) and the four equalities displayed in its proof
+gives ε > 0 and
+
+    y·F = ε·y    G·x = ε·x    B·x = (α/ε)·F·x    E·x = ε·x    y·E = ε·y,
+
+and that either F·x = ε·x, or the diagonal of F is zero and F·F = ε²·I; with x̂ = x in the
+first case and x̂ = F·x in the second, x̂ is a positive column with B·x̂ = α·x̂ and
+G·x̂ = ε·x̂. As in (C), α ≥ ε.
+
+*First case, F·x = ε·x.* Then B·x = α·x. Put z = y·B, so z·x = α. If z = α·y, then (5′),
+multiplied by y on the left, gives ε·z = α·(y·G), so y·G = ε·y; y is a left eigenvector of
+all five matrices with eigenvalues α, α, ε, ε, ε, and (C) applies. Otherwise z is not a
+multiple of y (a multiple β·y would have β = α, because z·x = α). Multiplying (4′) by y on the left gives ε·z = z·F; so F has the two
+independent left eigenvectors y and z for ε, and F = ε·I. Write E = ε·Π + ε′·(I − Π). Then
+B·E = ε·A + ε′·(B − A), and (2′) says that this equals F·A = ε·A; since B ≠ A, ε′ = 0 and
+E = ε·Π. Now (4′) reads ε·x·z = ε·B, so B = x·z; (5′) reads ε·x·z = α·x·(y·G), so
+y·G = (ε/α)·z; and (6′) reads ε·x·z = x·(z·G), so z·G = ε·z. These two values determine G:
+G = (ε/α)·B. Altogether, with Λ(v) = z·v,
+
+    A·v = α·λ(v)·x    E·v = ε·λ(v)·x    F·v = ε·v    B·v = Λ(v)·x    G·v = (ε/α)·Λ(v)·x
+
+and Λ(x) = α. Moreover z ≤ α²·y entry by entry: the diagonal entry α·x_i·y_i of A is a
+positive integer, so 1/x_i ≤ α·y_i, and z_i·x_i ≤ z·x = α. So Λ(v) ≤ α²·λ(v) for every
+non-negative column v.
+
+Multiplying the vector parts of 2t → t2 and 2◁ → tf◁ by z, with z·B = α·z, z·G = ε·z and
+z·B·A·m = α³·λ(m):
+
+    (ε − 1)·Λ(b) ≥ (α − 1)·Λ(g)        Λ(g) ≥ Λ(b) + Δ,   Δ = α·Λ(a) + α³·λ(m) − ε·Λ(m).
+
+Here Δ ≥ α·Λ(a) + α²·(α − ε)·λ(m) ≥ 0. So 0 ≥ (α − ε)·Λ(b) + (α − 1)·Δ, hence Δ = 0:
+Λ(a) = 0, ε·Λ(m) = α³·λ(m), and (α − ε)·Λ(b) = 0. The rule 2◁ → tf◁ itself reads
+g + (ε/α)·Λ(m)·x ≥ b + Λ(a)·x + α²·λ(m)·x, which is now g ≥ b. So ▷t → ▷2 is not strict,
+and it remains to show a = 0.
+
+If α > ε: Λ(b) = 0, so Λ(g) = 0 by the first inequality. The rule 2f → f1, multiplied by z,
+gives Λ(g) + ε·Λ(a) ≥ Λ(a) + α²·λ(f), so λ(f) = 0 and f = 0. The rule 1◁ → ff◁,
+f + F·m ≥ a + A·a + A·A·m, multiplied by y, gives ε·λ(m) ≥ (1 + α)·λ(a) + α²·λ(m), and
+since ε < α², λ(a) = 0 and a = 0.
+
+If α = ε: then Λ(m) = α²·λ(m). Multiplying by y the rules 0f → f0, 0◁ → t◁, 0t → t1,
+2f → f1 and 1◁ → ff◁, and by z the rule 1t → f2:
+
+    λ(a) ≥ λ(e)                          from  λ(e) + α·λ(a) ≥ λ(a) + α·λ(e)
+    λ(e) ≥ λ(b)                          from  λ(e) + α·λ(m) ≥ λ(b) + Λ(m)
+    Λ(f) ≤ λ(e) + (α − 1)·λ(b) ≤ α·λ(a)  from  λ(e) + α·λ(b) ≥ λ(b) + Λ(f)
+    λ(g) ≥ λ(a) + α·λ(f)                 from  λ(g) + Λ(a) ≥ λ(a) + α·λ(f)
+    λ(f) ≥ (1 + α)·λ(a)                  from  λ(f) + α·λ(m) ≥ (1 + α)·λ(a) + α²·λ(m)
+    α²·λ(g) ≤ Λ(f) + α·Λ(b)              from  Λ(f) + α·Λ(b) ≥ Λ(a) + α²·λ(g).
+
+So α²·(1 + α + α²)·λ(a) ≤ α²·λ(g) ≤ Λ(f) + α·Λ(b) ≤ α·λ(a) + α³·λ(b) ≤ (α + α³)·λ(a), that
+is (α⁴ + α² − α)·λ(a) ≤ 0, and a = 0.
+
+*Second case, F·x ≠ ε·x.* Then F·F = ε²·I, and x̂ = F·x is not a multiple of x (a multiple
+κ·x would have κ = ε, because y·F = ε·y). Multiplying
+(5′) by F on the left gives ε²·B = α·x̂·(y·G), so B = (α/ε²)·x̂·(y·G). Then (4′) reads
+(E·x̂)·(y·G) = x̂·(y·G·F), so E·x̂ is a multiple of x̂. But
+E·x̂ = ε′·x̂ + (ε − ε′)·(y·x̂)·x, so ε′ = ε and E = ε·I. Now (2′) reads
+α·x̂·y = (α/ε)·x̂·(y·G), so y·G = ε·y and B = (α/ε)·x̂·y; and y·B = (α/ε)·(y·F·x)·y = α·y.
+So y is a left eigenvector of all five matrices with eigenvalues α, α, ε, ε, ε, and (C)
+applies. ∎
+
+*Proof, right form, second statement.* If B ≠ A, this is (V′). If B = A, the argument for
+the left form applies word for word, with the first statement for the right form. ∎
+
+What Theorems 5, 6 and 8 leave open in dimension 2, in both forms, are the interpretations
+in which the matrix of f is triangular or diagonal, Theorem 6 does not apply (f has a zero
+on its diagonal, or neither t nor 2 mixes the coordinates), and the second statement of
+Theorem 8 does not apply (all digit matrices are triangular in the same direction, or one
+of the matrices of f, t, 0 is singular).
 
 For the case in which no digit mixes the coordinates in one direction there is a reduction
 to dimension 1.
@@ -669,9 +767,8 @@ every part. If z3 reports an integer solution, it is turned into a certificate a
 5. **Second pass.** The cases left undecided are taken up again with the results of
    sections 3 and 4. A pattern to which Theorem 6 or Theorem 8 applies is settled without
    the solver. For the others z3 is run again, with two changes. The conclusions of
-   Lemma III (left form: g ≠ 0), of Lemma IV (triangular patterns), of Corollary 9 (right
-   form, f mixes the coordinates) and of Corollary 10 (irreducible digit matrices) are
-   added as conditions. And a part that stays undecided is split by the size of the diagonal
+   Lemma III (left form: g ≠ 0), of Lemma IV (triangular patterns) and of Corollary 10
+   (irreducible digit matrices) are added as conditions. And a part that stays undecided is split by the size of the diagonal
    entries: each one that the pattern makes positive is either 1 or at least 2 (entries
    that Lemma I shows to be equal count once); a combination that still stays undecided
    is split once more on an entry off the diagonal.
@@ -687,15 +784,19 @@ since the proof of the lemma does not use the rule that was dropped. Finally The
 the weak conditions can be met, among them one for each of the cases of Theorem 7 that the
 proof of Theorem 8 has to treat: with the matrices fixed the remaining problem is small, z3
 decides it, and it must find that no rule can be strict. And for digit matrices of each
-of the kinds that Corollaries 9 and 10 allow, the weak conditions must remain satisfiable
-when the conditions of the corollaries are added.
+of the two kinds that Corollary 10 allows, the weak conditions must remain satisfiable
+when the condition of the corollary is added.
 
 ## 6. Results
 
-The case analysis with the final version of the script is running; this section will be
-filled in when it finishes.
+The second pass for the right form is running; this section will be filled in when it
+finishes.
 
 ## 7. Status
 
-- Lemma I, its corollaries and Lemma II are written proofs.
-- The case analysis is not complete, so nothing is claimed yet about dimension 2.
+- Written proofs: Lemmas I to IV, Corollaries 1, 2 and 10, and Theorems 5 to 8. They have
+  not been read by anyone else or checked by a proof assistant. The self-test of
+  `harness/dimension2.py` and `harness/theorem7_check.py` test their statements on
+  examples.
+- The case analysis for the patterns that the theorems do not cover is not complete, so
+  dimension 2 is not settled.
