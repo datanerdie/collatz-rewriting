@@ -11,9 +11,9 @@ dimension 2 the question is no longer whether the carries can be respected, but 
 such representation can be combined with the end rules.
 
 This note has four parts: a lemma about the carry rules that holds in every dimension, a
-simplification of the end markers, a theorem that excludes a family of interpretations in
-every dimension, and a case analysis for dimension 2 carried out by a solver. The status of
-each part is stated in section 6.
+simplification of the end markers, two theorems that exclude families of interpretations
+(one in every dimension, a stronger one in dimension 2), and a case analysis for dimension 2
+carried out by a solver. The status of each part is stated in section 6.
 
 ## 1. The carry rules can be undone around a circle
 
@@ -120,6 +120,8 @@ two-dimensional natural interpretation that removes a rule.
 In the right form, with m ≥ 0 for the vector of `◁` and r for the first row of the matrix of
 `▷`, the conditions used below are
 
+    2f → f1 (the carry rule f2 → 1f):   G·A ≥ A·F        g + G·a ≥ a + A·f
+    1t → f2 (the carry rule t1 → 2f):   F·B ≥ A·G        f + F·b ≥ a + A·g
     2t → t2 (the carry rule t2 → 2t):   G·B ≥ B·G        g + G·b ≥ b + B·g
     2◁ → tf◁:                                             g + G·m ≥ b + B·a + B·A·m
     ▷f → ▷:                             r·A ≥ r           r·a ≥ 0
@@ -127,7 +129,7 @@ In the right form, with m ≥ 0 for the vector of `◁` and r for the first row 
 
 and a strict rule means r·a > 0 or r·b > r·g.
 
-## 3. Interpretations that mix the two coordinates of both binary digits
+## 3. Interpretations in which the digit t or the digit 2 mixes the coordinates
 
 This section is proved in writing and holds in every dimension d. The vectors of f, t, 0, 1,
 2 are written a, b, e, f, g as above, and r, n, m are the row and the vectors of section 2.
@@ -215,11 +217,108 @@ y·A·m = λ(m), so m = 0.
   λ(g) = λ(b). With a = 0 and m = 0 the vector part of 2◁ → tf◁ is g ≥ b entry by entry.
   Since y is positive and y·(g − b) = 0, g = b, and ▷t → ▷2 is not strict. ∎
 
-The theorem leaves open the interpretations in which the matrix of f has a zero on the
-diagonal or a row (in the right form, a column) in common with the identity matrix, and
-those in which the matrices of t and 2 are both reducible, for example triangular. In
-dimension 1 the corresponding border case, a multiplier equal to 1, also needed a separate
-argument.
+Theorem 5 does not cover a matrix of f that shares a row (in the right form, a column) with
+the identity matrix. In dimension 1 the corresponding border case, a multiplier equal to 1,
+also needed a separate argument. In dimension 2 the border cases can be settled.
+
+**Theorem 6 (dimension 2).** In neither form is there a two-dimensional natural matrix
+interpretation that makes every rule of T weakly decreasing and a strict rule strictly
+decreasing, and in which
+
+- the matrix of t or the matrix of 2 has both entries off the diagonal positive, and
+- the matrix of f has both entries on the diagonal positive.
+
+Notation for the proof. A ≥ I by the second condition. Let C be the one of B, G that is
+irreducible and D the other; B·G = G·B by Corollary 1. Let y, x be the positive eigenvectors
+of C, and β, γ ≥ 0 the numbers with y·B = β·y, B·x = β·x, y·G = γ·y, G·x = γ·x; the one that
+belongs to C is at least 1. J is the matrix that exchanges the two coordinates. Three facts:
+
+- (E) *If β = γ and r is a non-negative, non-zero row with r·B = r·G, then G = B or r is a
+  positive multiple of y.* C is not a multiple of I, so every 2×2 matrix that commutes with
+  it has the form u·I + w·C; thus D = u·I + w·C with u + w·β = β, and
+  D − C = (1 − w)·(β·I − C). From r·(D − C) = 0: w = 1, which is D = C, or r·C = β·r, which
+  makes r a non-negative left eigenvector of C.
+- (J) *If β = γ = 1, then (B, G) is (J, J), (J, I) or (I, J).* C is an irreducible integer
+  matrix with spectral radius 1, so C = J and y = (1, 1). D commutes with J, so it has equal
+  diagonal entries u and equal off-diagonal entries w, with u + w = 1.
+- (P) *It is impossible that all five digit matrices have y as a left eigenvector with
+  eigenvalue 1 while r is a multiple of y.* Multiplying every vector condition by y would
+  turn the interpretation into a one-dimensional one: multiplier 1 and constant y·v for a
+  digit with vector v, multiplier 1 and constant 0 for the top marker, multiplier 0 and
+  constant y·n (or y·m) for the other marker. Every rule stays weakly decreasing, and a
+  strict rule stays strict because r is a multiple of y. This contradicts Theorem 4.
+
+*Proof, left form.* As in the proof of Theorem 5, r·x > 0 and
+γ·(r·x) = r·G·x ≥ r·A·B·x = β·(r·A·x) ≥ β·(r·x), now only because A ≥ I. So γ ≥ β. If γ > β,
+then γ ≥ 1 and the second half of the proof of Theorem 5 applies word for word. So γ = β ≥ 1
+and both inequalities are equalities. Since x is positive, r·A − r ≥ 0 and
+r·G − r·A·B ≥ 0, this means
+
+    r·A = r        and        r·G = r·A·B = r·B.
+
+By (E), G = B or r is a positive multiple of y.
+
+*If r is a positive multiple of y.* Then r·(A − I) = 0 with r positive forces A = I. The
+carry equalities A·G = F·A and B·F = G·A become G = F and B·F = G, so B·G = G; multiplying
+by y gives β·γ = γ, so β = γ = 1. Of the three pairs in (J) only B = I, G = J satisfies
+B·G = G. Then F = G = J, and A·F = E·B gives E = J. All five matrices fix y = (1, 1), and
+(P) gives a contradiction.
+
+*If G = B.* The rule t▷ → 2▷ reads b + B·n ≥ g + B·n, so b ≥ g. The rule ◁2 → ◁ft reads
+r·g ≥ r·a + r·A·b = r·a + r·b ≥ r·a + r·g. So r·a = 0, r·b = r·g, and this rule is not strict.
+Multiplying the carry rules f2 → 1f and f1 → 0t by r, and using r·A = r and r·a = 0:
+
+    r·g ≥ r·f + r·F·a ≥ r·f        r·f ≥ r·e + r·E·b ≥ r·e + r·B·b,
+
+the last step by the matrix part r·E ≥ r·B of ◁0 → ◁t, whose vector part is r·e ≥ r·b.
+Together: r·b = r·g ≥ r·f ≥ r·e + r·B·b ≥ r·b + r·B·b. Hence
+
+    r·B·b = 0        and        r·f = r·e = r·b.
+
+So ◁0 → ◁t is not strict, and ◁1 → ◁ff, which reads r·f ≥ r·a + r·A·a = 0, is strict only
+if r·b > 0. Suppose r·b > 0. If both entries of r were positive, both entries of r·B would
+be (B = G is irreducible), and r·B·b = 0 would give b = 0. So r has one positive entry;
+after exchanging the coordinates, r = (r₁, 0). Then r·B = r₁·(B₁₁, B₁₂) with B₁₂ > 0, so
+b₂ = 0, b₁ > 0 and B₁₁ = 0. From r·A = r the first row of A is (1, 0), and from r·E ≥ r·B,
+E₁₂ ≥ B₁₂ > 0. The carry equality A·E = E·A reads E₁₂ = E₁₂·A₂₂ and
+E₁₁ = E₁₁ + E₁₂·A₂₁ in the first row, so A₂₂ = 1 and A₂₁ = 0: A = I. Then G = F and
+B·F = G as before, so B·B = B, hence β = 1 and B = J; but J·J = I. Contradiction. ∎
+
+*Proof, right form.* The matrix part of ▷t → ▷2 gives
+(r·B − r·G)·x = (β − γ)·(r·x) ≥ 0, so β ≥ γ. Exactly as in the proof of Theorem 5, using only
+A ≥ I for y·A·m ≥ λ(m),
+
+    λ(g) ≥ λ(b) + Δ,    (γ − 1)·λ(b) ≥ (β − 1)·λ(g),    0 ≥ (β − γ)·λ(b) + (β − 1)·Δ,
+
+with Δ = β·λ(a) + β·(y·A·m − λ(m)) + (β − γ)·λ(m) ≥ 0.
+
+*Case β > 1.* Then Δ = 0 and (β − γ)·λ(b) = 0. From Δ = 0: a = 0, so ▷f → ▷ is not strict;
+and y·(A − I)·m = 0, so (A − I)·m = 0, that is, A·m = m. If β > γ, then b = 0 and ▷t → ▷2 is
+not strict. If β = γ, then λ(b) = λ(g) as in Theorem 5, and r·B = r·G because
+(r·B − r·G)·x = 0. By (E), r is a multiple of y, and then r·b − r·g is a multiple of
+λ(b) − λ(g) = 0; or G = B, and then 2◁ → tf◁ reads g + B·m ≥ b + B·A·m = b + B·m, so g ≥ b,
+and with λ(g) = λ(b), g = b. In both cases ▷t → ▷2 is not strict.
+
+*Case β = 1.* Then γ ≤ 1. If G is the irreducible one, γ = 1. If B is, then B = J by the
+argument of (J), G commutes with J, so it has equal diagonal entries u and equal off-diagonal
+entries w, and γ = u + w is 0 or 1.
+
+- γ = 0: then G = 0. The rule 2t → t2 gives g ≥ b + B·g, so λ(g) ≥ λ(b) + λ(g) and b = 0;
+  ▷t → ▷2 is not strict. The rules 2f → f1 and 1t → f2 give g ≥ a + A·f ≥ a + f and
+  f ≥ a + A·g ≥ a + g, so g ≥ 2·a + g and a = 0; ▷f → ▷ is not strict.
+- γ = 1: by (J) there are three pairs (B, G). Write p, q, s, u for the entries of A, row by
+  row; p, u ≥ 1. The carry equalities used are F·A = B·E, G·A = A·F, E·B = B·F, F·B = A·G.
+  - B = G = J: F·J = A·J gives F = A, and then J·A = A·A. Its top right entry is
+    u = q·(p + u). If q ≥ 1 the right side exceeds u; if q = 0, u = 0. Contradiction.
+  - B = J, G = I: F·J = A gives F = A·J, and then A = A·F = A·A·J. Its top left entry is
+    p = q·(p + u), a contradiction in the same way.
+  - B = I, G = J: then E = F = A·J, and F·A = E gives A·J·(A − I) = 0. With N = A − I ≥ 0
+    this is J·N + N·J·N = 0, so J·N = 0, N = 0 and A = I. So E = F = J. From
+    (r·B − r·G)·x = 0, r = r·J, so r is a multiple of y = (1, 1). By (P), a contradiction. ∎
+
+What Theorems 5 and 6 leave open in dimension 2 are the interpretations in which the matrix
+of f has a zero on its diagonal, and those in which neither t nor 2 mixes the coordinates
+(their matrices are both triangular or diagonal).
 
 ## 4. What the solver is asked
 
@@ -252,12 +351,22 @@ A case is *refuted* when z3 reports that no solution exists, for the whole patte
 every part. If z3 reports an integer solution, it is turned into a certificate and given to
 `checker/check.py`. Otherwise the case is *undecided*.
 
+5. **Second pass.** The cases left undecided are taken up again with the results of
+   section 3. A pattern to which Theorem 6 applies is settled without the solver. For the
+   others z3 is run again with longer time limits; in the left form the condition g ≠ 0 is
+   added, which is justified by Lemma III; and a part that stays undecided is split once
+   more on a matrix entry x that the pattern makes positive, into x = 1 and x ≥ 2.
+
 `harness/dimension2.py --selftest` checks the encoding in two ways. The representation of the
 value of a string given at the top of this note satisfies every weak condition, in both
 forms, and its transpose does not, which tests the order of every product. And for two
 smaller systems that do have a proof (T without `t▷ → 2▷` in the left form, T without the
 left-end rules in the right form) the same procedure finds an interpretation that the checker
-accepts.
+accepts; for the first of them also when the condition of Lemma III is added, as it must,
+since the proof of the lemma does not use the rule that was dropped. Finally Theorems 5
+and 6 are tested on concrete digit matrices that satisfy their hypotheses and for which the
+weak conditions can be met: with the matrices fixed the remaining problem is small, z3
+decides it, and it must find that no rule can be strict.
 
 ## 5. Results
 
