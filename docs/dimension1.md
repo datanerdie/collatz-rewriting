@@ -180,21 +180,26 @@ q₀, and (R4) reads q₀ ≥ q_t = v. In every case Q(u) ≥ v = Q(w), so the r
 Phase 3, with unbounded integer coefficients. Results are in `results/dimension1/summary.md`.
 
 - **Natural.** The constraints contain products of unknowns, which z3 is not guaranteed to
-  decide. Where it answers "none" for T and T.k (k up to 6), it confirms instances of
-  Theorem 4. It is also run on the shifted systems, the context systems, the residue-class
-  problems and the looping siblings, for which there is no written proof here.
+  decide. For T and T.k it answers "none" in both forms for k = 1 to 5 and in the left form
+  for k = 6, confirming those instances of Theorem 4; for the right form with k = 6 it did
+  not decide within 120 seconds. For the other encodings of the full problem (the shifted
+  systems S and S2, the context systems, and the shifted block systems) it answers "none" in
+  31 of 34 problems and is undecided in 3, all right forms with blocks of 5 or 6 steps. There
+  is no written proof here for the shifted systems.
 - **Arctic.** A one-dimensional arctic interpretation is x ↦ max(m + x, v) with m and v
   integers or −∞. The constraints are linear, so z3 decides them. Entries below zero are
-  allowed, which Phase 3 did not search. There is no written proof for the arctic case; the
-  result rests on z3.
+  allowed, which Phase 3 did not search. The answer is "none" for all 34 problems of the full
+  conjecture (every encoding, both forms, blocks up to 6 steps) and for all 24 looping
+  siblings. There is no written proof for the arctic case; the result rests on z3.
 - **Positive controls.** For the problems where Phase 3 found a one-dimensional proof or
   partial proof, z3 finds an interpretation too, and the checker accepts it. So the encoding
   given to z3 is not vacuously unsatisfiable.
 
 ## 7. Limits
 
-- Theorem 4 is a written proof. It has been checked against z3 for k = 1 to 6 where z3
-  answers, not formalised in a proof assistant.
+- Theorem 4 is a written proof for every k. It agrees with z3 on the eleven instances z3
+  decided (k = 1 to 6, except the right form for k = 6). It has not been formalised in a proof
+  assistant.
 - It covers natural interpretations of dimension 1 only. Dimension 2 is open: Phase 3 ruled it
   out for small coefficients only. Dimension 2 allows genuinely different behaviour (matrices
   do not commute), and the argument above does not carry over.
