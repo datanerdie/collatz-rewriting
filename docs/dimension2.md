@@ -774,7 +774,9 @@ every digit matrix is upper triangular and
 - *(right form)* p_f = p_t ≥ 2.
 
 The same holds with the two coordinates exchanged, that is, for lower triangular digit
-matrices and the entries at the bottom right.
+matrices and the entries at the bottom right: the conditions of section 2, to which Lemma II
+reduces the question, do not change when the two coordinates are exchanged in every digit
+matrix and vector, in r and in the vector of the other end marker.
 
 In the right form p_f = p_t holds as soon as p_t and one of p_0, p_1, p_2 are positive:
 p_f ≥ 1 because r·A ≥ r and r₁ > 0, so (D) gives p_2 = p_1, then p_0 = p_1, and then
@@ -906,8 +908,16 @@ the three vector parts are equalities, and no rule is strict. ∎
 
 ### Right form
 
-Here m = (m₁, m₂) is the vector of `◁`, and σ = p_f = p_t ≥ 2. Only the matrices and vectors
-of f and t, the vector m, and the rules as a whole are used; no inequality (U) is needed.
+Here m = (m₁, m₂) is the vector of `◁`, and σ = p_f = p_t ≥ 2. No inequality for the entries
+above the diagonal is written out in this proof; they enter through (F1), which uses that
+every carry rule is weakly decreasing. The second entries of the vector parts are used in
+this form: for a rule xy → zw of the right form (2t → t2, 1f → t0, 0t → t1, 1t → f2)
+
+    (K′)   w_x + q_x·w_y ≥ w_z + q_z·w_w
+
+and for the rules 0◁ → t◁ and 2◁ → tf◁
+
+    w_0 + q_0·m₂ ≥ w_t + q_t·m₂        w_2 + q_2·m₂ ≥ w_t + q_t·w_f + q_t·q_f·m₂.
 
 *The value of a number.* For a string w of binary digits define X(w) by X(empty) = m and
 X(ws) = M_s·X(w) + (v_s, w_s). This is the vector that the interpretation gives to the
@@ -941,7 +951,8 @@ k(t^l) = q_t^l·m₂ + w_t·(1 + … + q_t^(l−1)) ≤ (m₂ + l·w_t)·Λ^l, a
     Φ(t^j) ≤ C·(j + 1)²·Λ^j        for a constant C and all j.
 
 *(F3) Where the trajectory arrives.* C applied j times to 2^(j+1) − 1 gives 2·3^j − 1, and
-applied j times to 2^j − 1 it gives 3^j − 1. So by (F1) and (F2)
+applied j times to 2^j − 1 it gives 3^j − 1 (j ≥ 2, so that every number on the way is at
+least 3). So by (F1) and (F2), the second bound from Φ(3^j − 1) ≤ Φ(t^(j−1)),
 
     Φ(2·3^j − 1) ≤ C·(j + 1)²·Λ^j        Φ(3^j − 1) ≤ C·(j + 1)²·Λ^j.
 
@@ -1012,7 +1023,9 @@ strict. ∎
 numeral of N cannot increase along the trajectory of N, and that the trajectory of
 2^(j+1) − 1 climbs to 2·3^j − 1, a number with about 1.58 times as many digits. A measure
 that weighs digits by powers of σ ≥ 2 cannot absorb that. The value representation at the
-top of this note escapes because its multiplier that matters is 1.
+top of this note does not contradict the theorem. In the left form it is lower triangular
+and the entry in question is 1. In the right form it is upper triangular with
+p_f = p_t = 2, but there r·B ≥ r·G forces r₁ = 0, so by Lemma IV it has no strict rule.
 
 ## 6. What the solver is asked
 
@@ -1110,8 +1123,11 @@ that removes a rule, in either form, with coefficients of any size. This is a
 machine-assisted result and not a theorem proved in writing.
 
 - **Proved in writing:** Lemmas I to IV, Corollaries 1, 2 and 10, and Theorems 5 to 9.
-  An automated independent read of section 4 found no error and six gaps in the write-up,
-  which have been repaired. Section 5 (Theorem 9) has not been read independently yet.
+  Automated independent reads of sections 4 and 5 found no error; the gaps they found in
+  the write-up (six in section 4, four in section 5) have been repaired. In section 5 the
+  reader checked every algebraic step with z3 and the claims about trajectories on explicit
+  interpretations, and could check the three limit arguments and the density argument only
+  by reading.
   No person has read the proofs and no proof assistant has checked them. The self-test of
   `harness/dimension2.py` and `harness/theorem7_check.py` test the statements on examples.
 - **Rests on z3:** every pattern that Theorems 6 and 8 do not cover: 7,350 + 23 in the left
